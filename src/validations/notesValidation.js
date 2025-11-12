@@ -1,6 +1,5 @@
 import { Joi, Segments } from 'celebrate';
 import { isValidObjectId } from 'mongoose';
-import { TAGS } from '../constants/tags.js';
 
 const objectIdValidator = (value, helpers) => {
   return !isValidObjectId(value) ? helpers.message('Invalid id format') : value;
@@ -24,7 +23,7 @@ export const getAllNotesSchema = {
       'number.max': 'perPage must be at most {#limit}',
     }),
     tag: Joi.string()
-      .valid(...TAGS)
+      // .valid(...TAGS)
       .messages({
         'string.base': 'Tag must be a string',
         'any.only': "Tag doesn't exist",
@@ -46,7 +45,7 @@ export const createNoteSchema = {
       'string.base': 'content must be a string',
     }),
     tag: Joi.string()
-      .valid(...TAGS)
+      // .valid(...TAGS)
       .messages({
         'string.base': 'Tag must be a string',
         'any.only': "Tag doesn't exist",
@@ -68,7 +67,7 @@ export const updateNoteSchema = {
       'string.base': 'content must be a string',
     }),
     tag: Joi.string()
-      .valid(...TAGS)
+      // .valid(...TAGS)
       .messages({
         'string.base': 'Tag must be a string',
         'any.only': "Tag doesn't exist",

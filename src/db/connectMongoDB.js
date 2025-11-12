@@ -8,6 +8,8 @@ export const connectMongoDB = async () => {
     console.log('✅ MongoDB connection established successfully');
     await Note.syncIndexes();
     console.log('Indexes synced successfully');
+
+    console.log(`Connected Db: `, mongoose.connection.name);
   } catch (error) {
     console.error('❌ Failed to connect to MongoDB:', error.message);
     process.exit(1);
