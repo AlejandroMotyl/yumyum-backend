@@ -1,11 +1,11 @@
-import { Note } from '../models/note.js';
 import createHttpError from 'http-errors';
+import { Recipe } from '@modules/recipe.js';
 
 export const getAllNotes = async (req, res) => {
   const { page = 1, perPage = 10, search, tag } = req.query;
   const skip = (page - 1) * perPage;
 
-  const notesQuery = Note.find({ userId: req.user._id });
+  const notesQuery = Recipe.find({ userId: req.user._id });
 
   if (tag) {
     notesQuery.where({ tag });
@@ -35,7 +35,7 @@ export const getAllNotes = async (req, res) => {
 
 export const getNoteById = async (req, res, next) => {
   const { noteId } = req.params;
-  const note = await Note.findOne({
+  const note = await Recipe.findOne({
     _id: noteId,
     userId: req.user._id,
   });
@@ -49,7 +49,7 @@ export const getNoteById = async (req, res, next) => {
 };
 
 export const createNote = async (req, res) => {
-  const note = await Note.create({
+  const note = await Recipe.create({
     ...req.body,
     userId: req.user._id,
   });
@@ -58,7 +58,7 @@ export const createNote = async (req, res) => {
 
 export const deleteNote = async (req, res, next) => {
   const { noteId } = req.params;
-  const note = await Note.findOneAndDelete({
+  const note = await Recipe.findOneAndDelete({
     _id: noteId,
     userId: req.user._id,
   });
@@ -74,7 +74,7 @@ export const deleteNote = async (req, res, next) => {
 export const updateNote = async (req, res, next) => {
   const { noteId } = req.params;
 
-  const note = await Note.findOneAndUpdate(
+  const note = await Recipe.findOneAndUpdate(
     { _id: noteId, userId: req.user._id },
     req.body,
     {
