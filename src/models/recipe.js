@@ -7,28 +7,53 @@ const recipeSchema = new Schema(
       required: true,
       trim: true,
     },
-    content: { type: String, required: false, trim: true, default: '' },
-    userId: {
+    category: {
+      type: String, // приклад: "Dessert", "Lamb", "Beef"
+      required: true,
+      trim: true,
+    },
+    area: {
+      type: String, // приклад: "British", "Irish"
+      required: false,
+      trim: true,
+    },
+    instructions: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    description: {
+      type: String,
+      required: false,
+      trim: true,
+      default: '',
+    },
+    thumb: {
+      type: String, // URL до зображення
+      required: false,
+      trim: true,
+    },
+    time: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    owner: {
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
-    categoryId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Category',
-      required: false,
-    },
     ingredients: [
       {
-        ingredientId: {
+        id: {
           type: Schema.Types.ObjectId,
           ref: 'Ingredient',
           required: true,
         },
         measure: {
-          type: String, // наприклад: "200g", "2 cups", "1 tsp"
-          required: false,
+          type: String,
           trim: true,
+          required: false,
         },
       },
     ],
@@ -39,9 +64,13 @@ const recipeSchema = new Schema(
   },
 );
 
-recipeSchema.index({ title: 'text', content: 'text' });
-recipeSchema.index({ userId: 1, categoryId: 1 });
+recipeSchema.index({
+  title: 'text',
+  description: 'text',
+  instructions: 'text',
+});
+recipeSchema.index({ category: 1, owner: 1 });
 
-recipeSchema.index({ 'ingredients.ingredientId': 1 });
+recipeSchema.index({ 'ingredients.Id': 1 });
 
 export const Recipe = model('Recipe', recipeSchema);

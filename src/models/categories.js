@@ -23,10 +23,10 @@ categorySchema.statics.getAllCategories = function () {
   return this.find().sort({ name: 1 });
 };
 
-categorySchema.virtual('recipes', {
-  ref: 'Recipe',
-  localField: '_id',
-  foreignField: 'categoryId',
-});
+// categorySchema.virtual('recipes', {
+//   ref: 'Recipe',
+//   localField: '_id',
+//   foreignField: 'categoryId',
+// });
 
 export const Category = model('Category', categorySchema);
