@@ -22,9 +22,17 @@ const userSchema = new Schema(
       required: false,
       default: 'https://ac.goit.global/fullstack/react/default-avatar.jpg',
     },
+    savedRecipes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Recipe',
+      },
+    ],
   },
   { timestamps: true, versionKey: false },
 );
+
+userSchema.index({ savedRecipes: 1 });
 
 userSchema.pre('save', function (next) {
   if (!this.username) {
