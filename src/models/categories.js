@@ -23,10 +23,11 @@ categorySchema.statics.getAllCategories = function () {
   return this.find().sort({ name: 1 });
 };
 
-// categorySchema.virtual('recipes', {
-//   ref: 'Recipe',
-//   localField: '_id',
-//   foreignField: 'categoryId',
-// });
+// Віртуальне поле для отримання рецептів цієї категорії
+categorySchema.virtual('recipes', {
+  ref: 'Recipe', // з якої колекції тягнути
+  localField: '_id', // _id категорії
+  foreignField: 'categoryId', // поле у Recipe
+});
 
 export const Category = model('Category', categorySchema);
