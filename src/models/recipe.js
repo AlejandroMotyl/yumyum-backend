@@ -7,10 +7,10 @@ const recipeSchema = new Schema(
       required: true,
       trim: true,
     },
-    category: {
-      type: String, // приклад: "Dessert", "Lamb", "Beef"
+    categoryId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Category',
       required: true,
-      trim: true,
     },
     area: {
       type: String, // приклад: "British", "Irish"
@@ -45,7 +45,7 @@ const recipeSchema = new Schema(
     },
     ingredients: [
       {
-        id: {
+        ingredientId: {
           type: Schema.Types.ObjectId,
           ref: 'Ingredient',
           required: true,
@@ -69,8 +69,23 @@ recipeSchema.index({
   description: 'text',
   instructions: 'text',
 });
-recipeSchema.index({ category: 1, owner: 1 });
 
-recipeSchema.index({ 'ingredients.Id': 1 });
+//! ПРИКЛАД використання у контролері
+// import { Recipe } from '../models/recipe.js';
+
+// export const getRecipes = async (req, res) => {
+//   const recipes = await Recipe.find().populate(
+//     'owner',
+//     'username email avatar',
+//   ); // підтягнути дані користувача
+
+//   res.json(recipes);
+// };
+
+recipeSchema.index({ categoryId: 1 });
+
+recipeSchema.index({ owner: 1 });
+
+recipeSchema.index({ 'ingredients.ingredientId': 1 });
 
 export const Recipe = model('Recipe', recipeSchema);
