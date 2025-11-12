@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
-import { Note } from '../models/note.js';
+import { Recipe } from '../models/recipe.js';
 
 export const connectMongoDB = async () => {
   try {
     const mongoUrl = process.env.MONGO_URL;
     await mongoose.connect(mongoUrl);
     console.log('✅ MongoDB connection established successfully');
-    await Note.syncIndexes();
+    await Recipe.syncIndexes();
     console.log('Indexes synced successfully');
 
     console.log(`Connected Db: `, mongoose.connection.name);

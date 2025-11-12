@@ -4,7 +4,7 @@ import {
   getNoteById,
   createNote,
   deleteNote,
-} from '../controllers/notesController.js';
+} from '../controllers/recipeController.js';
 import {
   createNoteSchema,
   getAllNotesSchema,
