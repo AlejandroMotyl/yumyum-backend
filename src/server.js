@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import recipesRoutes from './routes/recipesRoutes.js';
+import categoriesRoutes from './routes/categoriesRoutes.js';
+import ingredientsRoutes from './routes/ingredientsRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import 'dotenv/config';
@@ -27,8 +29,10 @@ app.use(cookieParser());
 
 // ? Routes
 app.use(recipesRoutes);
+app.use(ingredientsRoutes);
 app.use(authRoutes);
 app.use(userRoutes);
+app.use(categoriesRoutes);
 
 // ! Error middleware
 app.use(notFoundHandler);

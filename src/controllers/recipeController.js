@@ -1,5 +1,6 @@
 import createHttpError from 'http-errors';
 import { Recipe } from '../models/recipe.js';
+import { User } from '../models/user.js';
 
 export const getAllNotes = async (req, res) => {
   const { page = 1, perPage = 10, search, tag } = req.query;
@@ -33,6 +34,32 @@ export const getAllNotes = async (req, res) => {
   });
 };
 
+//TODO:Get all user recipes
+
+export const getUserRecipes = async (req, res) => {
+  const { page = 1, perPage = 12 } = req.query;
+  const skip = (page - 1) * perPage;
+  const recipesQuery = Recipe.find({ owner: req.user._id }).populate(
+    'owner',
+    'username email',
+  );
+
+  const [totalRecipes, recipes] = await Promise.all([
+    recipesQuery.clone().countDocuments(),
+    recipesQuery.clone().skip(skip).limit(perPage),
+  ]);
+
+  const totalPages = Math.ceil(totalRecipes / perPage);
+
+  res.status(200).json({
+    page: Number(page),
+    perPage: Number(perPage),
+    totalRecipes,
+    totalPages,
+    recipes,
+  });
+};
+
 export const getRecipeById = async (req, res, next) => {
   const { recipeId } = req.params;
   const recipe = await Recipe.findOne({
@@ -47,12 +74,13 @@ export const getRecipeById = async (req, res, next) => {
   res.status(200).json(recipe);
 };
 
-export const createNote = async (req, res) => {
-  const note = await Recipe.create({
+export const createRecipe = async (req, res, next) => {
+  const recipe = await Recipe.create({
     ...req.body,
-    userId: req.user._id,
+    owner: req.user._id,
   });
-  res.status(201).json(note);
+
+  res.status(201).json(recipe);
 };
 
 export const deleteNote = async (req, res, next) => {
@@ -87,4 +115,68 @@ export const updateNote = async (req, res, next) => {
   }
 
   res.status(200).json(note);
+};
+
+export const addRecipeToFavorites = async (req, res) => {
+  const userId = req.user._id;
+  const { recipeId } = req.params;
+
+  const recipe = await Recipe.findById(recipeId);
+  if (!recipe) throw createHttpError(404, 'Recipe not found');
+
+  const user = await User.findById(userId);
+  if (user.savedRecipes.includes(recipeId))
+    throw createHttpError(400, 'Already in favorites');
+
+  user.savedRecipes.push(recipeId);
+  await user.save();
+
+  res.status(201).json({ message: 'Recipe added to favorites' });
+};
+
+export const removeRecipeFromFavorites = async (req, res) => {
+  const userId = req.user._id;
+  const { recipeId } = req.params;
+
+  const recipe = await Recipe.findById(recipeId);
+  if (!recipe) throw createHttpError(404, 'Recipe not found');
+
+  const user = await User.findById(userId);
+  const index = user.savedRecipes.indexOf(recipeId);
+
+  if (index === -1) {
+    throw createHttpError(404, 'Recipe not found in favorites');
+  }
+
+  user.savedRecipes.splice(index, 1);
+  await user.save();
+
+  res.json({ message: 'Recipe removed from favorites' });
+};
+
+export const getFavoriteRecipes = async (req, res) => {
+  const { page = 1, perPage = 12 } = req.query;
+  const pageNum = Number(page);
+  const limit = Number(perPage);
+  const skip = (pageNum - 1) * limit;
+
+  const countQuery = Recipe.countDocuments({ owner: req.user._id });
+
+  const dataQuery = Recipe.find({ owner: req.user._id })
+    .skip(skip)
+    .limit(limit)
+    .populate('owner', 'email')
+    .populate('ingredients.id', 'name');
+
+  const [totalRecipes, recipes] = await Promise.all([countQuery, dataQuery]);
+
+  const totalPages = Math.ceil(totalRecipes / limit);
+
+  res.status(200).json({
+    page: pageNum,
+    perPage: limit,
+    totalRecipes,
+    totalPages,
+    recipes,
+  });
 };

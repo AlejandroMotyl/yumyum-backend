@@ -1,22 +1,24 @@
 import { Router } from 'express';
 import {
   getAllNotes,
-  createNote,
-  deleteNote,
+  getUserRecipes,
+  getFavoriteRecipes,
+  removeRecipeFromFavorites,
+  addRecipeToFavorites,
+  createRecipe,
   getRecipeById,
 } from '../controllers/recipeController.js';
 import {
-  createNoteSchema,
+  createRecipeSchema,
   getAllNotesSchema,
-  noteIdSchema,
+  getAllUserRecipesSchema,
+  getFavoriteRecipesSchema,
   recipeIdSchema,
 } from '../validations/recipesValidation.js';
 import { celebrate } from 'celebrate';
 import { authenticate } from '../middleware/authenticate.js';
 
 const router = Router();
-
-router.use('/api/recipes', authenticate);
 
 // !!!!!!!!!! Переробити з notes на recipes, обовязково використовуєм /api/recipes для всіх рутів. !!!!!!!!!
 
@@ -33,34 +35,54 @@ router.get('/api/recipes/:recipeId', celebrate(recipeIdSchema), getRecipeById);
 
 // TODO: створити приватний ендпоінт для створення власного рецепту
 
-router.post('/notes', celebrate(createNoteSchema), createNote);
+router.post(
+  '/api/recipes/create-recipe',
+  authenticate,
+  celebrate(createRecipeSchema),
+  createRecipe,
+);
 
 // !!!
 
 // TODO: створити приватний ендпоінт для отримання власних рецептів
-
-// !!! Писати з нуля
+router.get(
+  '/api/recipes/own',
+  authenticate,
+  celebrate(getAllUserRecipesSchema),
+  getUserRecipes,
+);
 
 // TODO:створити приватний ендпоінт для додавання рецепту до списку улюблених
 
-// !!! Писати з нуля
+router.post(
+  '/api/recipes/favorites/:recipeId',
+  authenticate,
+  celebrate(recipeIdSchema),
+  addRecipeToFavorites,
+);
 
 // TODO:створити приватний ендпоінт для видалення рецепту зі списку улюблених
 
-router.delete('/notes/:noteId', celebrate(noteIdSchema), deleteNote);
+router.delete(
+  '/api/recipes/favorites/:recipeId',
+  authenticate,
+  celebrate(recipeIdSchema),
+  removeRecipeFromFavorites,
+);
 
 // TODO:створити приватний ендпоінт для отримання списку улюблених рецептів
 
-// router.get(
-//   '/api/recipes/favorites',
-//   celebrate(recipeSchema),
-//   getFavoriteRecipes,
-// );
+router.get(
+  '/api/recipes/favorites',
+  authenticate,
+  celebrate(getFavoriteRecipesSchema),
+  getFavoriteRecipes,
+);
 
 // !!!
 
 // ? Додаткове завдання для видалення власного рецепту
-// router.delete('/notes/:noteId', celebrate(noteIdSchema), deleteNote);
+// router.delete('/notes/:noteId', celebrate(recipeIdSchema), deleteNote);
 
 // ? Не чіпати, можливо для додаткового завдання реалізувати оновлення рецепту.
 // router.patch('/notes/:noteId', celebrate(updateNoteSchema), updateNote);
