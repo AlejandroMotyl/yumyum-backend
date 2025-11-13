@@ -50,26 +50,8 @@ export const getNoteById = async (req, res, next) => {
 };
 
 export const createRecipe = async (req, res, next) => {
-  const {
-    title,
-    category,
-    area,
-    instructions,
-    description,
-    thumb,
-    time,
-    ingredients,
-  } = req.body;
-
   const recipe = await Recipe.create({
-    title,
-    category,
-    area,
-    instructions,
-    description,
-    thumb,
-    time,
-    ingredients,
+    ...req.body,
     owner: req.user._id,
   });
 
