@@ -127,3 +127,30 @@ export const removeRecipeFromFavorites = async (req, res) => {
 
   res.json({ message: 'Recipe removed from favorites' });
 };
+
+export const getFavoriteRecipes = async (req, res) => {
+  const { page = 1, perPage = 12 } = req.query;
+  const pageNum = Number(page);
+  const limit = Number(perPage);
+  const skip = (pageNum - 1) * limit;
+
+  const countQuery = Recipe.countDocuments({ owner: req.user._id });
+
+  const dataQuery = Recipe.find({ owner: req.user._id })
+    .skip(skip)
+    .limit(limit)
+    .populate('owner', 'email')
+    .populate('ingredients.id', 'name');
+
+  const [totalRecipes, recipes] = await Promise.all([countQuery, dataQuery]);
+
+  const totalPages = Math.ceil(totalRecipes / limit);
+
+  res.status(200).json({
+    page: pageNum,
+    perPage: limit,
+    totalRecipes,
+    totalPages,
+    recipes,
+  });
+};

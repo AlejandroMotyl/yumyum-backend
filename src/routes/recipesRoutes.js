@@ -5,10 +5,12 @@ import {
   createNote,
   addRecipeToFavorites,
   removeRecipeFromFavorites,
+  getFavoriteRecipes,
 } from '../controllers/recipeController.js';
 import {
   createNoteSchema,
   getAllNotesSchema,
+  getFavoriteRecipeSchema,
   noteIdSchema,
   recipeIdSchema,
 } from '../validations/recipesValidation.js';
@@ -16,8 +18,6 @@ import { celebrate } from 'celebrate';
 import { authenticate } from '../middleware/authenticate.js';
 
 const router = Router();
-
-router.use('/api/recipes', authenticate);
 
 // !!!!!!!!!! Переробити з notes на recipes, обовязково використовуєм /api/recipes для всіх рутів. !!!!!!!!!
 
@@ -60,11 +60,12 @@ router.delete(
 
 // TODO:створити приватний ендпоінт для отримання списку улюблених рецептів
 
-// router.get(
-//   '/api/recipes/favorites',
-//   celebrate(recipeSchema),
-//   getFavoriteRecipes,
-// );
+router.get(
+  '/api/recipes/favorites',
+  authenticate,
+  celebrate(getFavoriteRecipeSchema),
+  getFavoriteRecipes,
+);
 
 // !!!
 
