@@ -22,9 +22,9 @@ export const getAllRecipesSchema = {
       'number.min': 'perPage must be at least {#limit}',
       'number.max': 'perPage must be at most {#limit}',
     }),
-    tag: Joi.string().trim().messages({
-      'string.base': 'Tag must be a string',
-      'any.only': "Tag doesn't exist",
+    category: Joi.string().trim().messages({
+      'string.base': 'Category must be a string',
+      'any.only': "Category doesn't exist",
     }),
     ingredient: Joi.string().hex().messages({
       'string.base': 'Ingredient must be a string',
