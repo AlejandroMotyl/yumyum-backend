@@ -50,7 +50,11 @@ router.delete('/notes/:noteId', celebrate(noteIdSchema), deleteNote);
 
 // TODO:створити приватний ендпоінт для отримання списку улюблених рецептів
 
-router.get('/notes/favorites', celebrate(recipeSchema), getFavoriteRecipes);
+router.get(
+  '/api/recipes/favorites',
+  celebrate(recipeSchema),
+  getFavoriteRecipes,
+);
 
 // !!!
 
