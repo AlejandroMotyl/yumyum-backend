@@ -4,10 +4,12 @@ import {
   getNoteById,
   createNote,
   deleteNote,
+  getUserRecipes,
 } from '../controllers/recipeController.js';
 import {
   createNoteSchema,
   getAllNotesSchema,
+  getAllUserRecipesSchema,
   noteIdSchema,
 } from '../validations/recipesValidation.js';
 import { celebrate } from 'celebrate';
@@ -37,8 +39,12 @@ router.post('/notes', celebrate(createNoteSchema), createNote);
 // !!!
 
 // TODO: створити приватний ендпоінт для отримання власних рецептів
-
-// !!! Писати з нуля
+router.get(
+  '/api/recipes',
+  authenticate,
+  celebrate(getAllUserRecipesSchema),
+  getUserRecipes,
+);
 
 // TODO:створити приватний ендпоінт для додавання рецепту до списку улюблених
 

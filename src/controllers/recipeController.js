@@ -33,6 +33,31 @@ export const getAllNotes = async (req, res) => {
   });
 };
 
+//TODO:Get all user recipes
+
+export const getUserRecipes = async (req, res) => {
+  const { page = 1, perPage = 12 } = req.query;
+  const skip = (page - 1) * perPage;
+  const recipesQuery = Recipe.find({ owner: req.user._id }).populate(
+    'owner',
+    'username email',
+  );
+
+  const [totalRecipes, recipes] = await Promise.all([
+    recipesQuery.clone().countDocuments(),
+    recipesQuery.clone().skip(skip).limit(perPage),
+  ]);
+
+  const totalPages = Math.ceil(totalRecipes / perPage);
+
+  res.status(200).json({
+    page: Number(page),
+    perPage: Number(perPage),
+    totalRecipes,
+    totalPages,
+    recipes,
+  });
+};
 export const getNoteById = async (req, res, next) => {
   const { noteId } = req.params;
   const note = await Recipe.findOne({
