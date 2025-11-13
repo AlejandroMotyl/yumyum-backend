@@ -13,7 +13,7 @@ import {
   createNoteSchema,
   getAllNotesSchema,
   getAllUserRecipesSchema,
-  getFavoriteRecipeSchema,
+  getFavoriteRecipesSchema,
   recipeIdSchema,
 } from '../validations/recipesValidation.js';
 import { celebrate } from 'celebrate';
@@ -71,7 +71,7 @@ router.delete(
 router.get(
   '/api/recipes/favorites',
   authenticate,
-  celebrate(getFavoriteRecipeSchema),
+  celebrate(getFavoriteRecipesSchema),
   getFavoriteRecipes,
 );
 
