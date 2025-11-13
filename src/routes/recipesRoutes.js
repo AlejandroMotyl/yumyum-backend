@@ -11,11 +11,8 @@ import {
   noteIdSchema,
 } from '../validations/recipesValidation.js';
 import { celebrate } from 'celebrate';
-import { authenticate } from '../middleware/authenticate.js';
 
 const router = Router();
-
-router.use('/api/recipes', authenticate);
 
 // !!!!!!!!!! Переробити з notes на recipes, обовязково використовуєм /api/recipes для всіх рутів. !!!!!!!!!
 
