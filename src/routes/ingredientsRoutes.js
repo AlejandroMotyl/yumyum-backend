@@ -1,11 +1,8 @@
 import { Router } from 'express';
-import { Ingredient } from '../models/ingredients.js';
+import { getIngredients } from '../controllers/ingredientsController.js';
 
 const router = Router();
 
-router.get('/api/ingredients', async (req, res) => {
-  const result = await Ingredient.find();
-  res.json(result);
-});
+router.get('/api/ingredients', getIngredients);
 
 export default router;
