@@ -1,14 +1,15 @@
 import { Router } from 'express';
 import {
   getAllNotes,
-  getNoteById,
   createNote,
   deleteNote,
+  getRecipeById,
 } from '../controllers/recipeController.js';
 import {
   createNoteSchema,
   getAllNotesSchema,
   noteIdSchema,
+  recipeIdSchema,
 } from '../validations/recipesValidation.js';
 import { celebrate } from 'celebrate';
 import { authenticate } from '../middleware/authenticate.js';
@@ -26,7 +27,7 @@ router.get('/notes', celebrate(getAllNotesSchema), getAllNotes);
 // !!!
 // TODO: створити публічний ендпоінт для отримання детальної інформації про рецепт за його id
 
-router.get('/notes/:noteId', celebrate(noteIdSchema), getNoteById);
+router.get('/api/recipes/:recipeId', celebrate(recipeIdSchema), getRecipeById);
 
 // !!!
 
