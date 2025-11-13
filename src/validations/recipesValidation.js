@@ -74,3 +74,17 @@ export const updateNoteSchema = {
       }),
   }).min(1),
 };
+
+export const getFavoriteRecipeSchema = {
+  [Segments.QUERY]: Joi.object({
+    page: Joi.number().min(1).default(1).messages({
+      'number.base': 'Page must be a number',
+      'number.min': 'Page must be at least {#limit}',
+    }),
+    perPage: Joi.number().min(5).max(20).default(12).messages({
+      'number.base': 'perPage must be a number',
+      'number.min': 'perPage must be at least {#limit}',
+      'number.max': 'perPage must be at most {#limit}',
+    }),
+  }),
+};

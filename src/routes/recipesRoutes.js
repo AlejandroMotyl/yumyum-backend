@@ -4,10 +4,12 @@ import {
   getNoteById,
   createNote,
   deleteNote,
+  getFavoriteRecipes,
 } from '../controllers/recipeController.js';
 import {
   createNoteSchema,
   getAllNotesSchema,
+  getFavoriteRecipeSchema,
   noteIdSchema,
 } from '../validations/recipesValidation.js';
 import { celebrate } from 'celebrate';
@@ -50,11 +52,11 @@ router.delete('/notes/:noteId', celebrate(noteIdSchema), deleteNote);
 
 // TODO:створити приватний ендпоінт для отримання списку улюблених рецептів
 
-// router.get(
-//   '/api/recipes/favorites',
-//   celebrate(recipeSchema),
-//   getFavoriteRecipes,
-// );
+router.get(
+  '/api/recipes/favorites',
+  celebrate(getFavoriteRecipeSchema),
+  getFavoriteRecipes,
+);
 
 // !!!
 
