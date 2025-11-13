@@ -1,4 +1,4 @@
-import { Ingredient } from '../models/ingredients.js';
+import { Ingredient } from '../models/ingredient.js';
 
 export const getIngredients = async (req, res) => {
   const result = await Ingredient.find();

@@ -82,7 +82,7 @@ export const Recipe = model('Recipe', recipeSchema);
 // export const getRecipes = async (req, res) => {
 //   const recipes = await Recipe.find().populate(
 //     'owner',
-//     'username email avatar',
+//     'email',
 //   ); // підтягнути дані користувача
 
 //   res.json(recipes);
