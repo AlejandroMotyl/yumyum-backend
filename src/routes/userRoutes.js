@@ -15,6 +15,6 @@ router.patch(
   updateUserAvatar,
 );
 
-router.get('/api/users/me', authenticate, getCurrentUser);
+router.get('/api/users', authenticate, getCurrentUser);
 
 export default router;
