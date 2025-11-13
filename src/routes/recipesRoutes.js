@@ -42,7 +42,7 @@ router.post('/notes', celebrate(createNoteSchema), createNote);
 
 // TODO: створити приватний ендпоінт для отримання власних рецептів
 router.get(
-  '/api/recipes',
+  '/api/recipes/own',
   authenticate,
   celebrate(getAllUserRecipesSchema),
   getUserRecipes,

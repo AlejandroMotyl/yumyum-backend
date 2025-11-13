@@ -59,6 +59,7 @@ export const getUserRecipes = async (req, res) => {
     recipes,
   });
 };
+
 export const getNoteById = async (req, res, next) => {
   const { noteId } = req.params;
   const note = await Recipe.findOne({
