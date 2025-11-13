@@ -3,12 +3,14 @@ import {
   getAllNotes,
   getNoteById,
   createNote,
-  deleteNote,
+  addRecipeToFavorites,
+  removeRecipeFromFavorites,
 } from '../controllers/recipeController.js';
 import {
   createNoteSchema,
   getAllNotesSchema,
   noteIdSchema,
+  recipeIdSchema,
 } from '../validations/recipesValidation.js';
 import { celebrate } from 'celebrate';
 import { authenticate } from '../middleware/authenticate.js';
@@ -42,11 +44,19 @@ router.post('/notes', celebrate(createNoteSchema), createNote);
 
 // TODO:створити приватний ендпоінт для додавання рецепту до списку улюблених
 
-// !!! Писати з нуля
+router.post(
+  '/api/recipes/favorites/:recipeId',
+  celebrate(recipeIdSchema),
+  addRecipeToFavorites,
+);
 
 // TODO:створити приватний ендпоінт для видалення рецепту зі списку улюблених
 
-router.delete('/notes/:noteId', celebrate(noteIdSchema), deleteNote);
+router.delete(
+  '/api/recipes/favorites/:recipeId',
+  celebrate(recipeIdSchema),
+  removeRecipeFromFavorites,
+);
 
 // TODO:створити приватний ендпоінт для отримання списку улюблених рецептів
 
