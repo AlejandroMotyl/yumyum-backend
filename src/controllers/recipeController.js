@@ -60,19 +60,18 @@ export const getUserRecipes = async (req, res) => {
   });
 };
 
-export const getNoteById = async (req, res, next) => {
-  const { noteId } = req.params;
-  const note = await Recipe.findOne({
-    _id: noteId,
-    userId: req.user._id,
+export const getRecipeById = async (req, res, next) => {
+  const { recipeId } = req.params;
+  const recipe = await Recipe.findOne({
+    _id: recipeId,
   });
 
-  if (!note) {
-    next(createHttpError(404, 'Note not found'));
+  if (!recipe) {
+    next(createHttpError(404, 'Recipe not found'));
     return;
   }
 
-  res.status(200).json(note);
+  res.status(200).json(recipe);
 };
 
 export const createRecipe = async (req, res, next) => {
