@@ -2,15 +2,14 @@ import { Router } from 'express';
 import {
   getAllNotes,
   getNoteById,
-  createNote,
-  deleteNote,
   getUserRecipes,
   getFavoriteRecipes,
   removeRecipeFromFavorites,
   addRecipeToFavorites,
+  createRecipe,
 } from '../controllers/recipeController.js';
 import {
-  createNoteSchema,
+  createRecipeSchema,
   getAllNotesSchema,
   getAllUserRecipesSchema,
   getFavoriteRecipesSchema,
@@ -36,7 +35,12 @@ router.get('/notes/:noteId', celebrate(recipeIdSchema), getNoteById);
 
 // TODO: створити приватний ендпоінт для створення власного рецепту
 
-router.post('/notes', celebrate(createNoteSchema), createNote);
+router.post(
+  '/api/recipes/create-recipe',
+  authenticate,
+  celebrate(createRecipeSchema),
+  createRecipe,
+);
 
 // !!!
 

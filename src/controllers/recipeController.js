@@ -75,12 +75,13 @@ export const getNoteById = async (req, res, next) => {
   res.status(200).json(note);
 };
 
-export const createNote = async (req, res) => {
-  const note = await Recipe.create({
+export const createRecipe = async (req, res, next) => {
+  const recipe = await Recipe.create({
     ...req.body,
-    userId: req.user._id,
+    owner: req.user._id,
   });
-  res.status(201).json(note);
+
+  res.status(201).json(recipe);
 };
 
 export const deleteNote = async (req, res, next) => {
