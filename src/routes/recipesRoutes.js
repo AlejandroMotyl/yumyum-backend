@@ -13,6 +13,7 @@ import {
   noteIdSchema,
 } from '../validations/recipesValidation.js';
 import { celebrate } from 'celebrate';
+import { authenticate } from '../middleware/authenticate.js';
 
 const router = Router();
 
@@ -51,6 +52,7 @@ router.delete('/notes/:noteId', celebrate(noteIdSchema), deleteNote);
 
 router.get(
   '/api/recipes/favorites',
+  authenticate,
   celebrate(getFavoriteRecipeSchema),
   getFavoriteRecipes,
 );
