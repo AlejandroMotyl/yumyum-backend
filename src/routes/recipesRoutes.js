@@ -3,14 +3,15 @@ import {
   getAllNotes,
   getNoteById,
   createNote,
-  deleteNote,
+  addRecipeToFavorites,
+  removeRecipeFromFavorites,
   getFavoriteRecipes,
 } from '../controllers/recipeController.js';
 import {
   createNoteSchema,
   getAllNotesSchema,
   getFavoriteRecipeSchema,
-  noteIdSchema,
+  recipeIdSchema,
 } from '../validations/recipesValidation.js';
 import { celebrate } from 'celebrate';
 import { authenticate } from '../middleware/authenticate.js';
@@ -26,7 +27,7 @@ router.get('/notes', celebrate(getAllNotesSchema), getAllNotes);
 // !!!
 // TODO: створити публічний ендпоінт для отримання детальної інформації про рецепт за його id
 
-router.get('/notes/:noteId', celebrate(noteIdSchema), getNoteById);
+router.get('/notes/:noteId', celebrate(recipeIdSchema), getNoteById);
 
 // !!!
 
@@ -42,11 +43,21 @@ router.post('/notes', celebrate(createNoteSchema), createNote);
 
 // TODO:створити приватний ендпоінт для додавання рецепту до списку улюблених
 
-// !!! Писати з нуля
+router.post(
+  '/api/recipes/favorites/:recipeId',
+  authenticate,
+  celebrate(recipeIdSchema),
+  addRecipeToFavorites,
+);
 
 // TODO:створити приватний ендпоінт для видалення рецепту зі списку улюблених
 
-router.delete('/notes/:noteId', celebrate(noteIdSchema), deleteNote);
+router.delete(
+  '/api/recipes/favorites/:recipeId',
+  authenticate,
+  celebrate(recipeIdSchema),
+  removeRecipeFromFavorites,
+);
 
 // TODO:створити приватний ендпоінт для отримання списку улюблених рецептів
 
@@ -60,7 +71,7 @@ router.get(
 // !!!
 
 // ? Додаткове завдання для видалення власного рецепту
-// router.delete('/notes/:noteId', celebrate(noteIdSchema), deleteNote);
+// router.delete('/notes/:noteId', celebrate(recipeIdSchema), deleteNote);
 
 // ? Не чіпати, можливо для додаткового завдання реалізувати оновлення рецепту.
 // router.patch('/notes/:noteId', celebrate(updateNoteSchema), updateNote);

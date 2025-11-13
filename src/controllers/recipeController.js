@@ -1,5 +1,6 @@
 import createHttpError from 'http-errors';
 import { Recipe } from '../models/recipe.js';
+import { User } from '../models/user.js';
 
 export const getAllNotes = async (req, res) => {
   const { page = 1, perPage = 10, search, tag } = req.query;
@@ -88,6 +89,43 @@ export const updateNote = async (req, res, next) => {
   }
 
   res.status(200).json(note);
+};
+
+export const addRecipeToFavorites = async (req, res) => {
+  const userId = req.user._id;
+  const { recipeId } = req.params;
+
+  const recipe = await Recipe.findById(recipeId);
+  if (!recipe) throw createHttpError(404, 'Recipe not found');
+
+  const user = await User.findById(userId);
+  if (user.savedRecipes.includes(recipeId))
+    throw createHttpError(400, 'Already in favorites');
+
+  user.savedRecipes.push(recipeId);
+  await user.save();
+
+  res.status(201).json({ message: 'Recipe added to favorites' });
+};
+
+export const removeRecipeFromFavorites = async (req, res) => {
+  const userId = req.user._id;
+  const { recipeId } = req.params;
+
+  const recipe = await Recipe.findById(recipeId);
+  if (!recipe) throw createHttpError(404, 'Recipe not found');
+
+  const user = await User.findById(userId);
+  const index = user.savedRecipes.indexOf(recipeId);
+
+  if (index === -1) {
+    throw createHttpError(404, 'Recipe not found in favorites');
+  }
+
+  user.savedRecipes.splice(index, 1);
+  await user.save();
+
+  res.json({ message: 'Recipe removed from favorites' });
 };
 
 export const getFavoriteRecipes = async (req, res) => {
