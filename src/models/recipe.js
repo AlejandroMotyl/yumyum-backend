@@ -70,6 +70,14 @@ recipeSchema.index({
   instructions: 'text',
 });
 
+recipeSchema.index({ categoryId: 1 });
+
+recipeSchema.index({ owner: 1 });
+
+recipeSchema.index({ 'ingredients.ingredientId': 1 });
+
+export const Recipe = model('Recipe', recipeSchema);
+
 //! ПРИКЛАД використання у контролері
 // import { Recipe } from '../models/recipe.js';
 
@@ -81,11 +89,3 @@ recipeSchema.index({
 
 //   res.json(recipes);
 // };
-
-recipeSchema.index({ categoryId: 1 });
-
-recipeSchema.index({ owner: 1 });
-
-recipeSchema.index({ 'ingredients.ingredientId': 1 });
-
-export const Recipe = model('Recipe', recipeSchema);
