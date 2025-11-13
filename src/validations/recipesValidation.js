@@ -36,7 +36,7 @@ export const getAllNotesSchema = {
 
 export const createRecipeSchema = {
   [Segments.BODY]: Joi.object({
-    title: Joi.string().min(1).required().messages({
+    title: Joi.string().max(64).required().messages({
       'string.base': 'Title must be a string',
       'string.min': 'Title should have at least {#limit} characters',
       'any.required': 'Title is required',
@@ -48,19 +48,28 @@ export const createRecipeSchema = {
     area: Joi.string().trim().allow('').messages({
       'string.base': 'Area must be a string',
     }),
-    instructions: Joi.string().required().messages({
+    instructions: Joi.string().max(1200).required().messages({
       'string.base': 'Instructions must be a string',
       'any.required': 'Instructions are required',
     }),
-    description: Joi.string().trim().allow('').messages({
+    description: Joi.string().max(200).trim().allow('').required().messages({
       'string.base': 'Description must be a string',
     }),
-    thumb: Joi.string().uri().trim().allow('').messages({
+    thumb: Joi.string().uri().max(2048).trim().allow('').messages({
       'string.uri': 'Thumb must be a valid URL',
     }),
-    time: Joi.string().required().messages({
+    /*
+     Обмеження розміру файлу (2Mb) краще перевіряти на рівні middleware (наприклад, через multer),
+  а не через Joi, оскільки Joi не має доступу до file.size з multipart/form-data напряму.
+    */
+    time: Joi.number().integer().min(1).max(360).required().messages({
       'string.base': 'Time must be a string',
       'any.required': 'Time is required',
+    }),
+    cals: Joi.number().integer().min(1).max(10000).optional().messages({
+      'number.base': 'Calories must be a number',
+      'number.min': 'Calories must be at least {#limit}',
+      'number.max': 'Calories must not exceed {#limit}',
     }),
     ingredients: Joi.array()
       .items(
@@ -74,10 +83,11 @@ export const createRecipeSchema = {
           }),
         }),
       )
-      .min(1)
+      .min(2)
+      .max(16)
       .required()
       .messages({
-        'array.min': 'At least one ingredient is required',
+        'array.min': 'At least two ingredients are required',
       }),
   }),
 };
