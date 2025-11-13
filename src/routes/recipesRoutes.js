@@ -9,7 +9,7 @@ import {
   createNoteSchema,
   getAllNotesSchema,
   noteIdSchema,
-} from '../validations/notesValidation.js';
+} from '../validations/recipesValidation.js';
 import { celebrate } from 'celebrate';
 import { authenticate } from '../middleware/authenticate.js';
 
@@ -47,6 +47,14 @@ router.post('/notes', celebrate(createNoteSchema), createNote);
 // TODO:створити приватний ендпоінт для видалення рецепту зі списку улюблених
 
 router.delete('/notes/:noteId', celebrate(noteIdSchema), deleteNote);
+
+// TODO:створити приватний ендпоінт для отримання списку улюблених рецептів
+
+router.get(
+  '/api/recipes/favorites',
+  celebrate(recipeSchema),
+  getFavoriteRecipes,
+);
 
 // !!!
 
