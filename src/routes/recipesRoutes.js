@@ -11,7 +11,6 @@ import {
   createNoteSchema,
   getAllNotesSchema,
   getFavoriteRecipeSchema,
-  noteIdSchema,
   recipeIdSchema,
 } from '../validations/recipesValidation.js';
 import { celebrate } from 'celebrate';
@@ -28,7 +27,7 @@ router.get('/notes', celebrate(getAllNotesSchema), getAllNotes);
 // !!!
 // TODO: створити публічний ендпоінт для отримання детальної інформації про рецепт за його id
 
-router.get('/notes/:noteId', celebrate(noteIdSchema), getNoteById);
+router.get('/notes/:noteId', celebrate(recipeIdSchema), getNoteById);
 
 // !!!
 
@@ -46,6 +45,7 @@ router.post('/notes', celebrate(createNoteSchema), createNote);
 
 router.post(
   '/api/recipes/favorites/:recipeId',
+  authenticate,
   celebrate(recipeIdSchema),
   addRecipeToFavorites,
 );
@@ -54,6 +54,7 @@ router.post(
 
 router.delete(
   '/api/recipes/favorites/:recipeId',
+  authenticate,
   celebrate(recipeIdSchema),
   removeRecipeFromFavorites,
 );
@@ -70,7 +71,7 @@ router.get(
 // !!!
 
 // ? Додаткове завдання для видалення власного рецепту
-// router.delete('/notes/:noteId', celebrate(noteIdSchema), deleteNote);
+// router.delete('/notes/:noteId', celebrate(recipeIdSchema), deleteNote);
 
 // ? Не чіпати, можливо для додаткового завдання реалізувати оновлення рецепту.
 // router.patch('/notes/:noteId', celebrate(updateNoteSchema), updateNote);
