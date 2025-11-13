@@ -2,35 +2,37 @@ import createHttpError from 'http-errors';
 import { Recipe } from '../models/recipe.js';
 import { User } from '../models/user.js';
 
-export const getAllNotes = async (req, res) => {
-  const { page = 1, perPage = 10, search, tag } = req.query;
+export const getAllRecipesPublic = async (req, res) => {
+  const { page = 1, perPage = 10, search, category, ingredient } = req.query;
   const skip = (page - 1) * perPage;
 
-  const notesQuery = Recipe.find({ userId: req.user._id });
+  const recipesQuery = Recipe.find();
 
-  if (tag) {
-    notesQuery.where({ tag });
+  if (category) {
+    recipesQuery.where({ category });
   }
-
+  if (ingredient) {
+    recipesQuery.where({ 'ingredients.id': ingredient });
+  }
   if (search) {
-    notesQuery.where({
+    recipesQuery.where({
       $text: { $search: search },
     });
   }
 
-  const [totalNotes, notes] = await Promise.all([
-    notesQuery.clone().countDocuments(),
-    notesQuery.skip(skip).limit(perPage),
+  const [totalRecipes, recipes] = await Promise.all([
+    recipesQuery.clone().countDocuments(),
+    recipesQuery.skip(skip).limit(perPage),
   ]);
 
-  const totalPages = Math.ceil(totalNotes / perPage);
+  const totalPages = Math.ceil(totalRecipes / perPage);
 
   res.status(200).json({
     page,
     perPage,
-    totalNotes,
+    totalRecipes,
     totalPages,
-    notes,
+    recipes,
   });
 };
 
