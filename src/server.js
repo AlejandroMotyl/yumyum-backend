@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import recipesRoutes from './routes/recipesRoutes.js';
+import ingredientsRoutes from './routes/ingredientsRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import 'dotenv/config';
@@ -27,6 +28,7 @@ app.use(cookieParser());
 
 // ? Routes
 app.use(recipesRoutes);
+app.use(ingredientsRoutes);
 app.use(authRoutes);
 app.use(userRoutes);
 
