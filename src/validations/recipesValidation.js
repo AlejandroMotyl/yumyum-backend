@@ -11,7 +11,7 @@ export const recipeIdSchema = {
   }),
 };
 
-export const getAllNotesSchema = {
+export const getAllRecipesSchema = {
   [Segments.QUERY]: Joi.object({
     page: Joi.number().min(1).default(1).messages({
       'number.base': 'Page must be a number',
@@ -22,12 +22,14 @@ export const getAllNotesSchema = {
       'number.min': 'perPage must be at least {#limit}',
       'number.max': 'perPage must be at most {#limit}',
     }),
-    tag: Joi.string()
-      // .valid(...TAGS)
-      .messages({
-        'string.base': 'Tag must be a string',
-        'any.only': "Tag doesn't exist",
-      }),
+    category: Joi.string().trim().messages({
+      'string.base': 'Category must be a string',
+      'any.only': "Category doesn't exist",
+    }),
+    ingredient: Joi.string().hex().messages({
+      'string.base': 'Ingredient must be a string',
+      'string.hex': 'Ingredient must be a valid ObjectId',
+    }),
     search: Joi.string().trim().allow('').messages({
       'string.base': 'Search must be a string',
     }),

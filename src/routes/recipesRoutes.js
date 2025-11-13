@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {
-  getAllNotes,
+  getAllRecipesPublic,
   getUserRecipes,
   getFavoriteRecipes,
   removeRecipeFromFavorites,
@@ -10,7 +10,7 @@ import {
 } from '../controllers/recipeController.js';
 import {
   createRecipeSchema,
-  getAllNotesSchema,
+  getAllRecipesSchema,
   getAllUserRecipesSchema,
   getFavoriteRecipesSchema,
   recipeIdSchema,
@@ -24,7 +24,7 @@ const router = Router();
 
 // TODO: створити публічний ендпоінт для пошуку рецептів за категорією, інгредієнтом, входженням пошукового значення в назву рецепту (з урахуванням логіки пагінації)
 
-router.get('/notes', celebrate(getAllNotesSchema), getAllNotes);
+router.get('/api/recipes', celebrate(getAllRecipesSchema), getAllRecipesPublic);
 
 // !!!
 // TODO: створити публічний ендпоінт для отримання детальної інформації про рецепт за його id
