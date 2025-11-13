@@ -40,7 +40,7 @@ export const getRecipeById = async (req, res, next) => {
   });
 
   if (!recipe) {
-    next(createHttpError(404, 'Note not found'));
+    next(createHttpError(404, 'Recipe not found'));
     return;
   }
 
