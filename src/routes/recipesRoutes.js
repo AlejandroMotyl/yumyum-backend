@@ -5,12 +5,17 @@ import {
   createNote,
   deleteNote,
   getUserRecipes,
+  getFavoriteRecipes,
+  removeRecipeFromFavorites,
+  addRecipeToFavorites,
 } from '../controllers/recipeController.js';
 import {
   createNoteSchema,
   getAllNotesSchema,
   getAllUserRecipesSchema,
+  getFavoriteRecipeSchema,
   noteIdSchema,
+  recipeIdSchema,
 } from '../validations/recipesValidation.js';
 import { celebrate } from 'celebrate';
 import { authenticate } from '../middleware/authenticate.js';
