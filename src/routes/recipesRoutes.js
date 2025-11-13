@@ -2,14 +2,16 @@ import { Router } from 'express';
 import {
   getAllNotes,
   getNoteById,
-  addRecipeToFavorites,
-  removeRecipeFromFavorites,
+  getUserRecipes,
   getFavoriteRecipes,
+  removeRecipeFromFavorites,
+  addRecipeToFavorites,
   createRecipe,
 } from '../controllers/recipeController.js';
 import {
   createRecipeSchema,
   getAllNotesSchema,
+  getAllUserRecipesSchema,
   getFavoriteRecipesSchema,
   recipeIdSchema,
 } from '../validations/recipesValidation.js';
@@ -43,8 +45,12 @@ router.post(
 // !!!
 
 // TODO: створити приватний ендпоінт для отримання власних рецептів
-
-// !!! Писати з нуля
+router.get(
+  '/api/recipes/own',
+  authenticate,
+  celebrate(getAllUserRecipesSchema),
+  getUserRecipes,
+);
 
 // TODO:створити приватний ендпоінт для додавання рецепту до списку улюблених
 
