@@ -29,7 +29,11 @@ router.get('/api/recipes', celebrate(getAllRecipesSchema), getAllRecipesPublic);
 // !!!
 // TODO: створити публічний ендпоінт для отримання детальної інформації про рецепт за його id
 
-router.get('/api/recipes/:recipeId', celebrate(recipeIdSchema), getRecipeById);
+router.get(
+  '/api/recipes/id/:recipeId',
+  celebrate(recipeIdSchema),
+  getRecipeById,
+);
 
 // !!!
 
