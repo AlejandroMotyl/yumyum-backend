@@ -34,21 +34,50 @@ export const getAllNotesSchema = {
   }),
 };
 
-export const createNoteSchema = {
+export const createRecipeSchema = {
   [Segments.BODY]: Joi.object({
     title: Joi.string().min(1).required().messages({
       'string.base': 'Title must be a string',
       'string.min': 'Title should have at least {#limit} characters',
       'any.required': 'Title is required',
     }),
-    content: Joi.string().trim().allow('').messages({
-      'string.base': 'content must be a string',
+    category: Joi.string().required().messages({
+      'string.base': 'Category must be a string',
+      'any.required': 'Category is required',
     }),
-    tag: Joi.string()
-      // .valid(...TAGS)
+    area: Joi.string().trim().allow('').messages({
+      'string.base': 'Area must be a string',
+    }),
+    instructions: Joi.string().required().messages({
+      'string.base': 'Instructions must be a string',
+      'any.required': 'Instructions are required',
+    }),
+    description: Joi.string().trim().allow('').messages({
+      'string.base': 'Description must be a string',
+    }),
+    thumb: Joi.string().uri().trim().allow('').messages({
+      'string.uri': 'Thumb must be a valid URL',
+    }),
+    time: Joi.string().required().messages({
+      'string.base': 'Time must be a string',
+      'any.required': 'Time is required',
+    }),
+    ingredients: Joi.array()
+      .items(
+        Joi.object({
+          id: Joi.string()
+            .custom(objectIdValidator)
+            .required()
+            .messages({ 'any.required': 'Ingredient id is required' }),
+          measure: Joi.string().trim().allow('').messages({
+            'string.base': 'Measure must be a string',
+          }),
+        }),
+      )
+      .min(1)
+      .required()
       .messages({
-        'string.base': 'Tag must be a string',
-        'any.only': "Tag doesn't exist",
+        'array.min': 'At least one ingredient is required',
       }),
   }),
 };
