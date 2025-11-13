@@ -75,7 +75,7 @@ export const updateNoteSchema = {
   }).min(1),
 };
 
-export const getFavoriteRecipeSchema = {
+export const getFavoriteRecipesSchema = {
   [Segments.QUERY]: Joi.object({
     page: Joi.number().min(1).default(1).messages({
       'number.base': 'Page must be a number',
