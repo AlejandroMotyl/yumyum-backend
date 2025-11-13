@@ -7,9 +7,9 @@ const recipeSchema = new Schema(
       required: true,
       trim: true,
     },
-    categoryId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Category',
+    category: {
+      type: String,
+      trim: true,
       required: true,
     },
     area: {
@@ -24,13 +24,11 @@ const recipeSchema = new Schema(
     },
     description: {
       type: String,
-      required: false,
       trim: true,
       default: '',
     },
     thumb: {
       type: String, // URL до зображення
-      required: false,
       trim: true,
     },
     time: {
@@ -45,7 +43,7 @@ const recipeSchema = new Schema(
     },
     ingredients: [
       {
-        ingredientId: {
+        id: {
           type: Schema.Types.ObjectId,
           ref: 'Ingredient',
           required: true,
@@ -74,7 +72,7 @@ recipeSchema.index({ categoryId: 1 });
 
 recipeSchema.index({ owner: 1 });
 
-recipeSchema.index({ 'ingredients.ingredientId': 1 });
+recipeSchema.index({ 'ingredients.id': 1 });
 
 export const Recipe = model('Recipe', recipeSchema);
 
