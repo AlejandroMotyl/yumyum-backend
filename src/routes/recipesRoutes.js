@@ -14,7 +14,6 @@ import {
   getAllNotesSchema,
   getAllUserRecipesSchema,
   getFavoriteRecipeSchema,
-  noteIdSchema,
   recipeIdSchema,
 } from '../validations/recipesValidation.js';
 import { celebrate } from 'celebrate';
