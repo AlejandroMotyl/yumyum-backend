@@ -18,7 +18,25 @@ const PORT = process.env.PORT ?? 3000;
 
 // ? Middleware
 app.use(logger);
-app.use(cors());
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'https://yumyum-frontend.vercel.app/',
+];
+
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        cb(null, true);
+      } else {
+        cb(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  }),
+);
+
 app.use(
   express.json({
     type: ['application/json', 'application/vnd.api+json'],
