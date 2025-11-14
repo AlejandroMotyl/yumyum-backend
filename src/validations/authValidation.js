@@ -2,14 +2,15 @@ import { Joi, Segments } from 'celebrate';
 
 export const registerUserSchema = {
   [Segments.BODY]: Joi.object({
-    email: Joi.string().email().required(),
-    password: Joi.string().min(8).required(),
+    name: Joi.string().max(16).required(),
+    email: Joi.string().email().max(128).required(),
+    password: Joi.string().min(8).max(128).required(),
   }),
 };
 
 export const loginUserSchema = {
   [Segments.BODY]: Joi.object({
-    email: Joi.string().email().required(),
-    password: Joi.string().required(),
+    email: Joi.string().email().max(128).required(),
+    password: Joi.string().max(128).required(),
   }),
 };
