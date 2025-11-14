@@ -17,8 +17,39 @@ import {
 } from '../validations/recipesValidation.js';
 import { celebrate } from 'celebrate';
 import { authenticate } from '../middleware/authenticate.js';
+import multer from 'multer';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 
 const router = Router();
+
+// multer memory storage + обмеження на файл
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 2 * 1024 * 1024 }, // 2 MB
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith('image/')) {
+      cb(new Error('Only image files are allowed'));
+    } else {
+      cb(null, true);
+    }
+  },
+});
+
+// middleware для завантаження thumb
+const handleThumbUpload = async (req, res, next) => {
+  if (req.file) {
+    const result = await saveFileToCloudinary(req.file.buffer);
+    req.body.thumb = result.secure_url;
+  }
+  next();
+};
+
+export const parseIngredients = (req, res, next) => {
+  if (typeof req.body.ingredients === 'string') {
+    req.body.ingredients = JSON.parse(req.body.ingredients);
+  }
+  next();
+};
 
 // !!!!!!!!!! Переробити з notes на recipes, обовязково використовуєм /api/recipes для всіх рутів. !!!!!!!!!
 
@@ -42,6 +73,9 @@ router.get(
 router.post(
   '/api/recipes/create-recipe',
   authenticate,
+  upload.single('thumb'),
+  handleThumbUpload,
+  parseIngredients,
   celebrate(createRecipeSchema),
   createRecipe,
 );

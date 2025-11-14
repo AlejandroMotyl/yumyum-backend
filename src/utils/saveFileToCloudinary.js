@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { Readable } from 'node:stream';
 import { v2 as cloudinary } from 'cloudinary';
 
@@ -12,7 +13,7 @@ export async function saveFileToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
-        folder: 'yumyum-app/avatars',
+        folder: 'yumyum-app/recipes',
         resource_type: 'image',
         overwrite: true,
         unique_filename: true,
