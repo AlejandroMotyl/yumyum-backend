@@ -5,7 +5,7 @@ import { createSession, setSessionCookies } from '../services/auth.js';
 import { Session } from '../models/session.js';
 
 export const registerUser = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, name } = req.body;
 
   const existingUser = await User.findOne({ email });
   if (existingUser) {
@@ -15,6 +15,7 @@ export const registerUser = async (req, res, next) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await User.create({
+    name,
     email,
     password: hashedPassword,
     savedRecipes: [],
