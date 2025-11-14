@@ -15,10 +15,8 @@ const categorySchema = new Schema(
   },
 );
 
-// Індекс для текстового пошуку
 categorySchema.index({ name: 'text' });
 
-// Статичний метод для отримання всіх категорій
 categorySchema.statics.getAllCategories = function () {
   return this.find().sort({ name: 1 });
 };

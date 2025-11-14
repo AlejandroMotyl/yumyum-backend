@@ -36,8 +36,6 @@ export const getAllRecipesSchema = {
   }),
 };
 
-//TODO: Validate all user recipes
-
 export const getAllUserRecipesSchema = {
   [Segments.QUERY]: Joi.object({
     page: Joi.number().min(1).default(1).messages({
@@ -75,10 +73,6 @@ export const createRecipeSchema = {
     thumb: Joi.string().uri().max(2048).trim().allow('').messages({
       'string.uri': 'Thumb must be a valid URL',
     }),
-    /*
-     Обмеження розміру файлу (2Mb) краще перевіряти на рівні middleware (наприклад, через multer),
-  а не через Joi, оскільки Joi не має доступу до file.size з multipart/form-data напряму.
-    */
     time: Joi.number().integer().min(1).max(360).required().messages({
       'string.base': 'Time must be a string',
       'any.required': 'Time is required',
@@ -107,28 +101,6 @@ export const createRecipeSchema = {
         'array.min': 'At least two ingredients are required',
       }),
   }),
-};
-
-export const updateNoteSchema = {
-  [Segments.PARAMS]: Joi.object({
-    noteId: Joi.string().custom(objectIdValidator).required(),
-  }),
-  [Segments.BODY]: Joi.object({
-    title: Joi.string().min(1).messages({
-      'string.base': 'Title must be a string',
-      'string.min': 'Title should have at least {#limit} characters',
-      'any.required': 'Title is required',
-    }),
-    content: Joi.string().trim().allow('').messages({
-      'string.base': 'content must be a string',
-    }),
-    tag: Joi.string()
-      // .valid(...TAGS)
-      .messages({
-        'string.base': 'Tag must be a string',
-        'any.only': "Tag doesn't exist",
-      }),
-  }).min(1),
 };
 
 export const getFavoriteRecipesSchema = {

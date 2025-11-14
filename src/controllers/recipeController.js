@@ -37,8 +37,6 @@ export const getAllRecipesPublic = async (req, res) => {
   });
 };
 
-//TODO:Get all user recipes
-
 export const getUserRecipes = async (req, res) => {
   const { page = 1, perPage = 12 } = req.query;
   const skip = (page - 1) * perPage;
@@ -89,40 +87,6 @@ export const createRecipe = async (req, res, next) => {
   });
 
   res.status(201).json(recipe);
-};
-
-export const deleteNote = async (req, res, next) => {
-  const { noteId } = req.params;
-  const note = await Recipe.findOneAndDelete({
-    _id: noteId,
-    userId: req.user._id,
-  });
-
-  if (!note) {
-    next(createHttpError(404, 'Note not found'));
-    return;
-  }
-
-  res.status(200).json(note);
-};
-
-export const updateNote = async (req, res, next) => {
-  const { noteId } = req.params;
-
-  const note = await Recipe.findOneAndUpdate(
-    { _id: noteId, userId: req.user._id },
-    req.body,
-    {
-      new: true,
-    },
-  );
-
-  if (!note) {
-    next(createHttpError(404, 'Note not found'));
-    return;
-  }
-
-  res.status(200).json(note);
 };
 
 export const addRecipeToFavorites = async (req, res) => {

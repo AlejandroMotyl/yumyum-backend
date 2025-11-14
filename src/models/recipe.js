@@ -13,7 +13,7 @@ const recipeSchema = new Schema(
       required: true,
     },
     area: {
-      type: String, // приклад: "British", "Irish"
+      type: String,
       required: false,
       trim: true,
     },
@@ -28,7 +28,7 @@ const recipeSchema = new Schema(
       default: '',
     },
     thumb: {
-      type: String, // URL до зображення
+      type: String,
       trim: true,
     },
     time: {
@@ -79,15 +79,3 @@ recipeSchema.index({ owner: 1 });
 recipeSchema.index({ 'ingredients.id': 1 });
 
 export const Recipe = model('Recipe', recipeSchema);
-
-//! ПРИКЛАД використання у контролері
-// import { Recipe } from '../models/recipe.js';
-
-// export const getRecipes = async (req, res) => {
-//   const recipes = await Recipe.find().populate(
-//     'owner',
-//     'email',
-//   ); // підтягнути дані користувача
-
-//   res.json(recipes);
-// };

@@ -26,7 +26,6 @@ const ingredientSchema = new Schema(
   },
 );
 
-// Індекс для текстового пошуку
 ingredientSchema.index({ name: 'text' });
 
 export const Ingredient = model('Ingredient', ingredientSchema);

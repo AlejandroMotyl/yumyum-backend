@@ -22,24 +22,14 @@ import { parseIngredients } from '../utils/parseIngredients.js';
 
 const router = Router();
 
-// !!!!!!!!!! Переробити з notes на recipes, обовязково використовуєм /api/recipes для всіх рутів. !!!!!!!!!
-
-// TODO: створити публічний ендпоінт для пошуку рецептів за категорією, інгредієнтом, входженням пошукового значення в назву рецепту (з урахуванням логіки пагінації)
-
+// !!!!! НЕ ПРАЦЮЄ ФІЛЬТРАЦІЯ ПО ІНГРЕДІЄНТУ
 router.get('/api/recipes', celebrate(getAllRecipesSchema), getAllRecipesPublic);
-
-// !!!
-// TODO: створити публічний ендпоінт для отримання детальної інформації про рецепт за його id
 
 router.get(
   '/api/recipes/id/:recipeId',
   celebrate(recipeIdSchema),
   getRecipeById,
 );
-
-// !!!
-
-// TODO: створити приватний ендпоінт для створення власного рецепту
 
 router.post(
   '/api/recipes/create-recipe',
@@ -50,17 +40,12 @@ router.post(
   createRecipe,
 );
 
-// !!!
-
-// TODO: створити приватний ендпоінт для отримання власних рецептів
 router.get(
   '/api/recipes/own',
   authenticate,
   celebrate(getAllUserRecipesSchema),
   getUserRecipes,
 );
-
-// TODO:створити приватний ендпоінт для додавання рецепту до списку улюблених
 
 router.post(
   '/api/recipes/favorites/:recipeId',
@@ -69,8 +54,6 @@ router.post(
   addRecipeToFavorites,
 );
 
-// TODO:створити приватний ендпоінт для видалення рецепту зі списку улюблених
-
 router.delete(
   '/api/recipes/favorites/:recipeId',
   authenticate,
@@ -78,21 +61,11 @@ router.delete(
   removeRecipeFromFavorites,
 );
 
-// TODO:створити приватний ендпоінт для отримання списку улюблених рецептів
-
 router.get(
   '/api/recipes/favorites',
   authenticate,
   celebrate(getFavoriteRecipesSchema),
   getFavoriteRecipes,
 );
-
-// !!!
-
-// ? Додаткове завдання для видалення власного рецепту
-// router.delete('/notes/:noteId', celebrate(recipeIdSchema), deleteNote);
-
-// ? Не чіпати, можливо для додаткового завдання реалізувати оновлення рецепту.
-// router.patch('/notes/:noteId', celebrate(updateNoteSchema), updateNote);
 
 export default router;
