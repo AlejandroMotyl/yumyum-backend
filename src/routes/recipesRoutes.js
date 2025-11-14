@@ -17,6 +17,8 @@ import {
 } from '../validations/recipesValidation.js';
 import { celebrate } from 'celebrate';
 import { authenticate } from '../middleware/authenticate.js';
+import { upload } from '../middleware/multer.js';
+import { parseIngredients } from '../utils/parseIngredients.js';
 
 const router = Router();
 
@@ -42,6 +44,8 @@ router.get(
 router.post(
   '/api/recipes/create-recipe',
   authenticate,
+  upload.single('thumb'),
+  parseIngredients,
   celebrate(createRecipeSchema),
   createRecipe,
 );
