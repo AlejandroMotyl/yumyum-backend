@@ -162,16 +162,23 @@ export const getFavoriteRecipes = async (req, res) => {
   const limit = Number(perPage);
   const skip = (pageNum - 1) * limit;
 
-  const countQuery = Recipe.countDocuments({ owner: req.user._id });
+  const user = await User.findById(req.user._id).populate({
+    path: 'savedRecipes',
+    options: {
+      skip,
+      limit,
+      populate: [
+        { path: 'owner', select: 'username email avatar' },
+        { path: 'ingredients.id', select: 'name img desc' },
+      ],
+    },
+  });
 
-  const dataQuery = Recipe.find({ owner: req.user._id })
-    .skip(skip)
-    .limit(limit)
-    .populate('owner', 'email')
-    .populate('ingredients.id', 'name');
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
 
-  const [totalRecipes, recipes] = await Promise.all([countQuery, dataQuery]);
-
+  const totalRecipes = user.savedRecipes.length;
   const totalPages = Math.ceil(totalRecipes / limit);
 
   res.status(200).json({
@@ -179,6 +186,6 @@ export const getFavoriteRecipes = async (req, res) => {
     perPage: limit,
     totalRecipes,
     totalPages,
-    recipes,
+    recipes: user.savedRecipes,
   });
 };
