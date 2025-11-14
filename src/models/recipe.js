@@ -32,15 +32,19 @@ const recipeSchema = new Schema(
       trim: true,
     },
     time: {
-      type: String,
+      type: Number,
       required: true,
-      trim: true,
+    },
+    cals: {
+      type: Number,
+      required: false,
     },
     owner: {
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
+
     ingredients: [
       {
         id: {
