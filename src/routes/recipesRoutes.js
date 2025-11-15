@@ -22,7 +22,6 @@ import { parseIngredients } from '../utils/parseIngredients.js';
 
 const router = Router();
 
-// !!!!! НЕ ПРАЦЮЄ ФІЛЬТРАЦІЯ ПО ІНГРЕДІЄНТУ
 router.get('/api/recipes', celebrate(getAllRecipesSchema), getAllRecipesPublic);
 
 router.get(
