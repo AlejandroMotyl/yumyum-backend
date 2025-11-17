@@ -8,6 +8,7 @@ export const getCurrentUser = async (req, res, next) => {
       _id: req.user._id,
       name: req.user.name,
       email: req.user.email,
+      savedRecipes: req.user.savedRecipes,
     });
   } catch (error) {
     next(error);
