@@ -132,17 +132,7 @@ export const getFavoriteRecipes = async (req, res) => {
   const limit = Number(perPage);
   const skip = (pageNum - 1) * limit;
 
-  const user = await User.findById(req.user._id).populate({
-    path: 'savedRecipes',
-    options: {
-      skip,
-      limit,
-      populate: [
-        { path: 'owner', select: 'username email avatar' },
-        { path: 'ingredients.id', select: 'name img desc' },
-      ],
-    },
-  });
+  const user = await User.findById(req.user._id).select('savedRecipes');
 
   if (!user) {
     throw createHttpError(404, 'User not found');
@@ -151,11 +141,19 @@ export const getFavoriteRecipes = async (req, res) => {
   const totalRecipes = user.savedRecipes.length;
   const totalPages = Math.ceil(totalRecipes / limit);
 
+  const recipes = await Recipe.find({
+    _id: { $in: user.savedRecipes },
+  })
+    .skip(skip)
+    .limit(limit)
+    .populate('owner', 'username email avatar')
+    .populate('ingredients.id', 'name img desc');
+
   res.status(200).json({
     page: pageNum,
     perPage: limit,
     totalRecipes,
     totalPages,
-    recipes: user.savedRecipes,
+    recipes,
   });
 };
