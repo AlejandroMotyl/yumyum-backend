@@ -7,6 +7,7 @@ import {
   addRecipeToFavorites,
   createRecipe,
   getRecipeById,
+  deleteMyRecipe,
 } from '../controllers/recipeController.js';
 import {
   createRecipeSchema,
@@ -65,6 +66,13 @@ router.get(
   authenticate,
   celebrate(getFavoriteRecipesSchema),
   getFavoriteRecipes,
+);
+
+router.delete(
+  '/api/recipes/own/:recipeId',
+  authenticate,
+  celebrate(recipeIdSchema),
+  deleteMyRecipe,
 );
 
 export default router;
