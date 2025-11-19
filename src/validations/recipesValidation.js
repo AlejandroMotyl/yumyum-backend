@@ -67,7 +67,7 @@ export const createRecipeSchema = {
       'string.base': 'Instructions must be a string',
       'any.required': 'Instructions are required',
     }),
-    description: Joi.string().max(200).trim().allow('').messages({
+    description: Joi.string().max(200).trim().allow('').required().messages({
       'string.base': 'Description must be a string',
     }),
     thumb: Joi.string().uri().max(2048).trim().allow('').messages({
