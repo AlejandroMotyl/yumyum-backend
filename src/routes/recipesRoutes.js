@@ -55,7 +55,7 @@ router.post(
 );
 
 router.delete(
-  '/api/recipes/own/delete/:recipeId',
+  '/api/recipes/favorites/:recipeId',
   authenticate,
   celebrate(recipeIdSchema),
   removeRecipeFromFavorites,
@@ -69,7 +69,7 @@ router.get(
 );
 
 router.delete(
-  '/api/recipes/own/:recipeId',
+  '/api/recipes/own/delete/:recipeId',
   authenticate,
   celebrate(recipeIdSchema),
   deleteMyRecipe,
