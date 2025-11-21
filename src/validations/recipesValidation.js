@@ -26,13 +26,15 @@ export const getAllRecipesSchema = {
       'string.base': 'Category must be a string',
       'any.only': "Category doesn't exist",
     }),
-    ingredient: Joi.string().hex().messages({
+    ingredient: Joi.string().custom(objectIdValidator).messages({
       'string.base': 'Ingredient must be a string',
       'string.hex': 'Ingredient must be a valid ObjectId',
     }),
     search: Joi.string().trim().allow('').messages({
       'string.base': 'Search must be a string',
     }),
+    sortBy: Joi.string().valid('time', 'cals', 'popularity').optional(),
+    sortOrder: Joi.string().valid('asc', 'desc').optional(),
   }),
 };
 
@@ -46,6 +48,19 @@ export const getAllUserRecipesSchema = {
       'number.base': 'perPage must be a number',
       'number.min': 'perPage must be at least {#limit}',
     }),
+    category: Joi.string().trim().messages({
+      'string.base': 'Category must be a string',
+      'any.only': "Category doesn't exist",
+    }),
+    ingredient: Joi.string().custom(objectIdValidator).messages({
+      'string.base': 'Ingredient must be a string',
+      'any.required': 'Ingredient must be a valid ObjectId',
+    }),
+    search: Joi.string().trim().allow('').messages({
+      'string.base': 'Search must be a string',
+    }),
+    sortBy: Joi.string().valid('time', 'cals', 'popularity').optional(),
+    sortOrder: Joi.string().valid('asc', 'desc').optional(),
   }),
 };
 
@@ -74,7 +89,7 @@ export const createRecipeSchema = {
       'string.uri': 'Thumb must be a valid URL',
     }),
     time: Joi.number().integer().min(1).max(360).required().messages({
-      'string.base': 'Time must be a string',
+      'number.base': 'Time must be a number',
       'any.required': 'Time is required',
     }),
     cals: Joi.number().integer().min(1).max(10000).optional().messages({
@@ -114,5 +129,18 @@ export const getFavoriteRecipesSchema = {
       'number.min': 'perPage must be at least {#limit}',
       'number.max': 'perPage must be at most {#limit}',
     }),
+    category: Joi.string().trim().messages({
+      'string.base': 'Category must be a string',
+      'any.only': "Category doesn't exist",
+    }),
+    ingredient: Joi.string().custom(objectIdValidator).messages({
+      'string.base': 'Ingredient must be a string',
+      'any.required': 'Ingredient must be a valid ObjectId',
+    }),
+    search: Joi.string().trim().allow('').messages({
+      'string.base': 'Search must be a string',
+    }),
+    sortBy: Joi.string().valid('time', 'cals', 'popularity').optional(),
+    sortOrder: Joi.string().valid('asc', 'desc').optional(),
   }),
 };
