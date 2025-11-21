@@ -157,3 +157,24 @@ export const getFavoriteRecipes = async (req, res) => {
     recipes,
   });
 };
+
+export const deleteMyRecipe = async (req, res) => {
+  const userId = req.user._id;
+  const { recipeId } = req.params;
+
+  const recipe = await Recipe.findById(recipeId);
+  if (!recipe) throw createHttpError(404, 'Recipe not found');
+
+  if (recipe.owner.toString() !== userId.toString()) {
+    throw createHttpError(403, 'You are not the owner of this recipe');
+  }
+
+  await User.updateMany(
+    { savedRecipes: recipeId },
+    { $pull: { savedRecipes: recipeId } },
+  );
+
+  await Recipe.findByIdAndDelete(recipeId);
+
+  res.json({ message: 'Recipe deleted successfully' });
+};
