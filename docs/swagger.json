@@ -5,7 +5,6 @@
     "description": "API documentation for YumYum app",
     "version": "1.0.0"
   },
-  "host": "localhost:3001",
   "basePath": "/",
   "schemes": ["http"],
   "tags": [

@@ -11,15 +11,6 @@ const endpointsFiles = [
   './src/routes/userRoutes.js',
 ];
 
-const doc = {
-  info: {
-    title: 'YumYum API',
-    description: 'API documentation for YumYum app',
-  },
-  host: 'localhost:3001',
-  schemes: ['http'],
-};
-
-swaggerAutogen()(outputFile, endpointsFiles, doc).then(() => {
+swaggerAutogen()(outputFile, endpointsFiles).then(() => {
   console.log('Swagger documentation generated successfully!');
 });

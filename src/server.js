@@ -17,6 +17,7 @@ import swaggerDocument from '../docs/swagger.json' with { type: "json" };
 
 export const app = express();
 const PORT = process.env.PORT ?? 3000;
+swaggerDocument.host = PORT;
 
 // ? Middleware
 app.use(logger);
