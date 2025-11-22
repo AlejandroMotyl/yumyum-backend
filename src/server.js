@@ -12,6 +12,8 @@ import { logger } from './middleware/logger.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { errors } from 'celebrate';
 import cookieParser from 'cookie-parser';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from '../docs/swagger.json' with { type: "json" };
 
 export const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -45,6 +47,7 @@ app.use(
 );
 
 app.use(cookieParser());
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // ? Routes
 app.use(recipesRoutes);
