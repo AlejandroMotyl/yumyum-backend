@@ -4,7 +4,15 @@ import { User } from '../models/user.js';
 import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 
 export const getAllRecipesPublic = async (req, res) => {
-  const { page = 1, perPage = 10, search, category, ingredient } = req.query;
+  const {
+    page = 1,
+    perPage = 10,
+    search,
+    category,
+    ingredient,
+    sortBy,
+    sortOrder = 'asc',
+  } = req.query;
   const skip = (page - 1) * perPage;
 
   const recipesQuery = Recipe.find();
@@ -18,6 +26,18 @@ export const getAllRecipesPublic = async (req, res) => {
   if (search) {
     recipesQuery.where({
       $text: { $search: search },
+    });
+  }
+
+  const allowedSortFields = {
+    time: 'time',
+    cals: 'cals',
+    popularity: 'favoritesCount',
+  };
+
+  if (sortBy && allowedSortFields[sortBy]) {
+    recipesQuery.sort({
+      [allowedSortFields[sortBy]]: sortOrder === 'desc' ? -1 : 1,
     });
   }
 
@@ -38,16 +58,47 @@ export const getAllRecipesPublic = async (req, res) => {
 };
 
 export const getUserRecipes = async (req, res) => {
-  const { page = 1, perPage = 12 } = req.query;
+  const {
+    page = 1,
+    perPage = 12,
+    search,
+    category,
+    ingredient,
+    sortBy,
+    sortOrder = 'asc',
+  } = req.query;
+
   const skip = (page - 1) * perPage;
   const recipesQuery = Recipe.find({ owner: req.user._id }).populate(
     'owner',
     'username email',
   );
 
+  if (category) {
+    recipesQuery.where({ category });
+  }
+  if (ingredient) {
+    recipesQuery.where({ 'ingredients.id': ingredient });
+  }
+  if (search) {
+    recipesQuery.where({ $text: { $search: search } });
+  }
+
+  const allowedSortFields = {
+    time: 'time',
+    cals: 'cals',
+    popularity: 'favoritesCount',
+  };
+
+  if (sortBy && allowedSortFields[sortBy]) {
+    recipesQuery.sort({
+      [allowedSortFields[sortBy]]: sortOrder === 'desc' ? -1 : 1,
+    });
+  }
+
   const [totalRecipes, recipes] = await Promise.all([
     recipesQuery.clone().countDocuments(),
-    recipesQuery.clone().skip(skip).limit(perPage),
+    recipesQuery.skip(skip).limit(perPage),
   ]);
 
   const totalPages = Math.ceil(totalRecipes / perPage);
@@ -103,6 +154,8 @@ export const addRecipeToFavorites = async (req, res) => {
   user.savedRecipes.push(recipeId);
   await user.save();
 
+  await Recipe.findByIdAndUpdate(recipeId, { $inc: { favoritesCount: 1 } });
+
   res.status(201).json({ message: 'Recipe added to favorites' });
 };
 
@@ -123,31 +176,65 @@ export const removeRecipeFromFavorites = async (req, res) => {
   user.savedRecipes.splice(index, 1);
   await user.save();
 
+  await Recipe.findByIdAndUpdate(recipeId, {
+    $inc: { favoritesCount: recipe.favoritesCount > 0 ? -1 : 0 },
+  });
+
   res.json({ message: 'Recipe removed from favorites' });
 };
 
 export const getFavoriteRecipes = async (req, res) => {
-  const { page = 1, perPage = 12 } = req.query;
+  const {
+    page = 1,
+    perPage = 12,
+    search,
+    category,
+    ingredient,
+    sortBy,
+    sortOrder = 'asc',
+  } = req.query;
+
   const pageNum = Number(page);
   const limit = Number(perPage);
   const skip = (pageNum - 1) * limit;
 
   const user = await User.findById(req.user._id).select('savedRecipes');
-
   if (!user) {
     throw createHttpError(404, 'User not found');
   }
 
-  const totalRecipes = user.savedRecipes.length;
-  const totalPages = Math.ceil(totalRecipes / limit);
-
-  const recipes = await Recipe.find({
-    _id: { $in: user.savedRecipes },
-  })
-    .skip(skip)
-    .limit(limit)
+  const recipesQuery = Recipe.find({ _id: { $in: user.savedRecipes } })
     .populate('owner', 'username email avatar')
     .populate('ingredients.id', 'name img desc');
+
+  if (category) {
+    recipesQuery.where({ category });
+  }
+  if (ingredient) {
+    recipesQuery.where({ 'ingredients.id': ingredient });
+  }
+  if (search) {
+    recipesQuery.where({ $text: { $search: search } });
+  }
+
+  const allowedSortFields = {
+    time: 'time',
+    cals: 'cals',
+    popularity: 'favoritesCount',
+  };
+
+  if (sortBy && allowedSortFields[sortBy]) {
+    recipesQuery.sort({
+      [allowedSortFields[sortBy]]: sortOrder === 'desc' ? -1 : 1,
+    });
+  }
+
+  const [totalRecipes, recipes] = await Promise.all([
+    recipesQuery.clone().countDocuments(),
+    recipesQuery.skip(skip).limit(limit),
+  ]);
+
+  const totalPages = Math.ceil(totalRecipes / limit);
 
   res.status(200).json({
     page: pageNum,
@@ -169,10 +256,17 @@ export const deleteMyRecipe = async (req, res) => {
     throw createHttpError(403, 'You are not the owner of this recipe');
   }
 
-  await User.updateMany(
+  const usersUpdated = await User.updateMany(
     { savedRecipes: recipeId },
     { $pull: { savedRecipes: recipeId } },
   );
+
+  const decrementValue = usersUpdated.modifiedCount || 0;
+  if (decrementValue > 0) {
+    await Recipe.findByIdAndUpdate(recipeId, {
+      $inc: { favoritesCount: -decrementValue },
+    });
+  }
 
   await Recipe.findByIdAndDelete(recipeId);
 

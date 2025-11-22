@@ -44,6 +44,10 @@ const recipeSchema = new Schema(
       ref: 'User',
       required: true,
     },
+    favoritesCount: {
+      type: Number,
+      default: 0,
+    },
 
     ingredients: [
       {
@@ -72,7 +76,7 @@ recipeSchema.index({
   instructions: 'text',
 });
 
-recipeSchema.index({ categoryId: 1 });
+recipeSchema.index({ category: 1 });
 
 recipeSchema.index({ owner: 1 });
 
