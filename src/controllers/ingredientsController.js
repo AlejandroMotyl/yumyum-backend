@@ -6,7 +6,7 @@ export const getIngredients = async (req, res, next) => {
     const result = await Ingredient.find();
 
     if (!result || result.length === 0) {
-      throw createHttpError(404, 'No categories found');
+      throw createHttpError(404, 'No ingredients found');
     }
 
     res.json(result);
