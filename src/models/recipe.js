@@ -26,6 +26,7 @@ const recipeSchema = new Schema(
       type: String,
       trim: true,
       default: '',
+      required: true,
     },
     thumb: {
       type: String,
@@ -44,19 +45,16 @@ const recipeSchema = new Schema(
       ref: 'User',
       required: true,
     },
+    favoritesCount: {
+      type: Number,
+      default: 0,
+    },
 
     ingredients: [
       {
         _id: false,
-        id: {
-          type: String,
-          required: true,
-        },
-        measure: {
-          type: String,
-          trim: true,
-          required: false,
-        },
+        id: { type: String, required: true },
+        ingredient: { type: String, required: true },
       },
     ],
   },
@@ -72,7 +70,7 @@ recipeSchema.index({
   instructions: 'text',
 });
 
-recipeSchema.index({ categoryId: 1 });
+recipeSchema.index({ category: 1 });
 
 recipeSchema.index({ owner: 1 });
 
