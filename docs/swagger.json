@@ -5,8 +5,13 @@
     "description": "API documentation for YumYum app",
     "version": "1.0.0"
   },
-  "basePath": "/",
-  "schemes": ["http"],
+  "servers": [
+    { "url": "http://localhost:3000", "description": "Local dev" },
+    {
+      "url": "https://nodejs-hw-zdyd.onrender.com",
+      "description": "Render production"
+    }
+  ],
   "tags": [
     { "name": "Auth", "description": "Authentication endpoints" },
     { "name": "Users", "description": "User endpoints" },
@@ -15,7 +20,7 @@
     { "name": "Categories", "description": "Category endpoints" }
   ],
   "paths": {
-    "/auth/register": {
+    "/api/auth/register": {
       "post": {
         "summary": "Register a new user",
         "tags": ["Auth"],
@@ -413,7 +418,7 @@
             "multipart/form-data": {
               "schema": {
                 "type": "object",
-                "required": ["title", "category", "ingredients"],
+                "required": ["title", "category", "description", "ingredients"],
                 "properties": {
                   "title": { "type": "string", "example": "Chocolate Cake" },
                   "description": {

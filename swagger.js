@@ -1,7 +1,7 @@
 import swaggerAutogen from 'swagger-autogen';
 import path from 'path';
 
-const outputFile = path.join('docs', 'swagger.json'); // Where swagger.json will be generated
+const outputFile = path.resolve(process.cwd(), 'docs', 'swagger.json');
 const endpointsFiles = [
   './src/server.js',
   './src/routes/recipesRoutes.js',
@@ -11,6 +11,7 @@ const endpointsFiles = [
   './src/routes/userRoutes.js',
 ];
 
-swaggerAutogen()(outputFile, endpointsFiles).then(() => {
+const swagger = swaggerAutogen();
+swagger(outputFile, endpointsFiles).then(() => {
   console.log('Swagger documentation generated successfully!');
 });

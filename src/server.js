@@ -13,18 +13,46 @@ import { errorHandler } from './middleware/errorHandler.js';
 import { errors } from 'celebrate';
 import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
-import swaggerDocument from '../docs/swagger.json' with { type: "json" };
+import fs from 'fs';
+import path from 'path';
 
 export const app = express();
 const PORT = process.env.PORT ?? 3000;
-swaggerDocument.host = PORT;
+const BASE_URL =
+  process.env.BASE_URL ||
+  process.env.RENDER_EXTERNAL_URL ||
+  `http://localhost:${PORT}`;
+
+const swaggerPath = path.resolve(process.cwd(), 'docs', 'swagger.json');
+let swaggerDocument = {};
+try {
+  swaggerDocument = JSON.parse(fs.readFileSync(swaggerPath, 'utf8'));
+  const base =
+    process.env.BASE_URL ||
+    process.env.RENDER_EXTERNAL_URL ||
+    `http://localhost:${PORT}`;
+
+  if (!Array.isArray(swaggerDocument.servers)) {
+    swaggerDocument.servers = [{ url: base, description: 'API server' }];
+  } else {
+    const hasBase = swaggerDocument.servers.some((s) => s.url === base);
+    if (!hasBase)
+      swaggerDocument.servers.unshift({ url: base, description: 'API server' });
+  }
+} catch (err) {
+  console.warn(
+    'swagger.json not found or invalid — swagger UI disabled',
+    err.message,
+  );
+}
 
 // ? Middleware
 app.use(logger);
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:3001',
-  'https://yumyum-frontend.vercel.app/',
+  'https://yumyum-frontend.vercel.app',
+  'https://nodejs-hw-zdyd.onrender.com',
 ];
 
 app.use(
@@ -48,8 +76,9 @@ app.use(
 );
 
 app.use(cookieParser());
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
+if (Object.keys(swaggerDocument).length) {
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+}
 // ? Routes
 app.use(recipesRoutes);
 app.use(ingredientsRoutes);
@@ -66,5 +95,5 @@ app.use(errorHandler);
 await connectMongoDB();
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on ${BASE_URL}`);
 });
