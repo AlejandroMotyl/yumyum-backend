@@ -294,6 +294,7 @@
         "tags": ["Recipes"],
         "summary": "Get all recipes (public)",
         "description": "Returns a paginated list of recipes. Optional filters: category, ingredient, search term.",
+
         "parameters": [
           {
             "name": "page",
@@ -322,8 +323,33 @@
           {
             "name": "ingredient",
             "in": "query",
-            "description": "Filter recipes by ingredient ID",
-            "schema": { "type": "string" }
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$"
+            },
+            "description": "Ingredient ObjectId"
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["time", "cals", "popularity"]
+            },
+            "description": "Sort recipes by time, calories, or popularity"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"],
+              "default": "asc"
+            },
+            "description": "Sort order direction"
           }
         ],
         "responses": {
@@ -390,6 +416,177 @@
                 "examples": {
                   "recipeNotFound": {
                     "value": { "message": "Recipe not found" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/recipes/own": {
+      "get": {
+        "tags": ["Recipes"],
+        "summary": "Get current user's recipes",
+        "description": "Returns a paginated list of recipes created by the authenticated user.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "schema": { "type": "integer", "default": 1 }
+          },
+          {
+            "name": "perPage",
+            "in": "query",
+            "description": "Number of recipes per page",
+            "schema": { "type": "integer", "default": 12 }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["time", "cals", "popularity"]
+            },
+            "description": "Sort recipes by time, calories, or popularity"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"],
+              "default": "asc"
+            },
+            "description": "Sort order direction"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User's recipes retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "page": { "type": "integer", "example": 1 },
+                    "perPage": { "type": "integer", "example": 12 },
+                    "totalRecipes": { "type": "integer", "example": 5 },
+                    "totalPages": { "type": "integer", "example": 1 },
+                    "recipes": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Recipe" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - user not authenticated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnauthorizedError" },
+                "examples": {
+                  "unauthorized": {
+                    "value": { "message": "Missing access token" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/recipes/own/delete/{recipeId}": {
+      "delete": {
+        "tags": ["Recipes"],
+        "summary": "Delete a recipe owned by the current user",
+        "description": "Deletes recipe and reduces favoritesCount on all users",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "recipeId",
+            "in": "path",
+            "required": true,
+            "description": "The unique ID of the recipe to delete",
+            "schema": { "type": "string", "pattern": "^[0-9a-fA-F]{24}$" },
+            "example": "6462a8f74c3d0ddd28897fcd"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recipe deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Recipe deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - user is not the owner",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "notOwner": {
+                    "value": {
+                      "message": "You are not the owner of this recipe"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recipe not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/NotFoundError" },
+                "examples": {
+                  "recipeNotFound": {
+                    "value": { "message": "Recipe not found" }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - user not authenticated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UnauthorizedError" },
+                "examples": {
+                  "unauthorized": {
+                    "value": { "message": "Missing access token" }
                   }
                 }
               }
@@ -485,13 +682,23 @@
         }
       }
     },
-    "/api/recipes/own": {
+    "/api/recipes/favorites": {
       "get": {
         "tags": ["Recipes"],
-        "summary": "Get current user's recipes",
-        "description": "Returns a paginated list of recipes created by the authenticated user.",
+        "summary": "Get favorite recipes of current user",
+        "description": "Returns a paginated list of recipes that the authenticated user has added to their favorites.",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["time", "cals", "popularity"]
+            },
+            "description": "Sort recipes by time, calories, or popularity"
+          },
           {
             "name": "page",
             "in": "query",
@@ -507,7 +714,7 @@
         ],
         "responses": {
           "200": {
-            "description": "User's recipes retrieved successfully",
+            "description": "Favorite recipes retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -539,6 +746,17 @@
               }
             }
           },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/NotFoundError" },
+                "examples": {
+                  "userNotFound": { "value": { "message": "User not found" } }
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal server error",
             "content": {
@@ -554,7 +772,7 @@
       "post": {
         "tags": ["Recipes"],
         "summary": "Add a recipe to favorites",
-        "description": "Adds a recipe to the authenticated user's favorites list.",
+        "description": "Adds recipe to favorites and increments favoritesCount",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
@@ -636,7 +854,7 @@
       "delete": {
         "tags": ["Recipes"],
         "summary": "Remove a recipe from favorites",
-        "description": "Removes a recipe from the authenticated user's favorites list.",
+        "description": "Removes recipe from favorites and decrements favoritesCount (if > 0)",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
@@ -673,167 +891,6 @@
                 "examples": {
                   "notInFavorites": {
                     "value": { "message": "Recipe not found in favorites" }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - user not authenticated",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/UnauthorizedError" },
-                "examples": {
-                  "unauthorized": {
-                    "value": { "message": "Missing access token" }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/recipes/favorites": {
-      "get": {
-        "tags": ["Recipes"],
-        "summary": "Get favorite recipes of current user",
-        "description": "Returns a paginated list of recipes that the authenticated user has added to their favorites.",
-        "security": [{ "bearerAuth": [] }],
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "Page number for pagination",
-            "schema": { "type": "integer", "default": 1 }
-          },
-          {
-            "name": "perPage",
-            "in": "query",
-            "description": "Number of recipes per page",
-            "schema": { "type": "integer", "default": 12 }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Favorite recipes retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "page": { "type": "integer", "example": 1 },
-                    "perPage": { "type": "integer", "example": 12 },
-                    "totalRecipes": { "type": "integer", "example": 5 },
-                    "totalPages": { "type": "integer", "example": 1 },
-                    "recipes": {
-                      "type": "array",
-                      "items": { "$ref": "#/components/schemas/Recipe" }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - user not authenticated",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/UnauthorizedError" },
-                "examples": {
-                  "unauthorized": {
-                    "value": { "message": "Missing access token" }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User not found",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/NotFoundError" },
-                "examples": {
-                  "userNotFound": { "value": { "message": "User not found" } }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/recipes/own/delete/{recipeId}": {
-      "delete": {
-        "tags": ["Recipes"],
-        "summary": "Delete a recipe owned by the current user",
-        "description": "Deletes a recipe if it belongs to the authenticated user. Also removes it from all users' favorite lists.",
-        "security": [{ "bearerAuth": [] }],
-        "parameters": [
-          {
-            "name": "recipeId",
-            "in": "path",
-            "required": true,
-            "description": "The unique ID of the recipe to delete",
-            "schema": { "type": "string", "pattern": "^[0-9a-fA-F]{24}$" },
-            "example": "6462a8f74c3d0ddd28897fcd"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Recipe deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Recipe deleted successfully"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - user is not the owner",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
-                "examples": {
-                  "notOwner": {
-                    "value": {
-                      "message": "You are not the owner of this recipe"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Recipe not found",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/NotFoundError" },
-                "examples": {
-                  "recipeNotFound": {
-                    "value": { "message": "Recipe not found" }
                   }
                 }
               }
@@ -1030,9 +1087,21 @@
           "title": { "type": "string", "example": "Battenberg Cake" },
           "category": { "type": "string", "example": "Dessert" },
           "owner": {
-            "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
-            "example": "64c8d958249fae54bae90bb9"
+            "type": "object",
+            "description": "Owner of the recipe",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "pattern": "^[0-9a-fA-F]{24}$",
+                "example": "64c8d958249fae54bae90bb9"
+              },
+              "username": { "type": "string", "example": "johndoe" },
+              "email": { "type": "string", "example": "john@example.com" },
+              "avatar": {
+                "type": "string",
+                "example": "https://example.com/avatar.jpg"
+              }
+            }
           },
           "area": { "type": "string", "example": "British" },
           "instructions": {
@@ -1048,8 +1117,13 @@
             "format": "uri",
             "example": "https://ftp.goit.study/img/so-yummy/preview/Battenberg%20Cake.jpg"
           },
-          "time": { "type": "number", "example": 60 },
-          "cals": { "type": "number", "example": 1200 },
+          "time": { "type": "integer", "example": 60 },
+          "cals": { "type": "integer", "example": 1200 },
+          "favoritesCount": {
+            "type": "integer",
+            "description": "How many users saved this recipe",
+            "example": 14
+          },
           "ingredients": {
             "type": "array",
             "items": {
@@ -1057,6 +1131,7 @@
               "properties": {
                 "id": {
                   "type": "string",
+                  "pattern": "^[0-9a-fA-F]{24}$",
                   "example": "640c2dd963a319ea671e367e"
                 },
                 "measure": { "type": "string", "example": "175g" }
@@ -1075,7 +1150,6 @@
           }
         }
       },
-
       "ErrorResponse": {
         "type": "object",
         "description": "Generic error response",
@@ -1104,11 +1178,11 @@
       },
       "NotFoundError": {
         "type": "object",
-        "description": "Route not found",
+        "description": "Resource not found",
         "properties": {
           "message": {
             "type": "string",
-            "example": "Route not found"
+            "example": "Recipe not found"
           }
         }
       }
