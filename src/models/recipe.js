@@ -26,6 +26,7 @@ const recipeSchema = new Schema(
       type: String,
       trim: true,
       default: '',
+      required: true,
     },
     thumb: {
       type: String,
@@ -52,15 +53,8 @@ const recipeSchema = new Schema(
     ingredients: [
       {
         _id: false,
-        id: {
-          type: String,
-          required: true,
-        },
-        measure: {
-          type: String,
-          trim: true,
-          required: false,
-        },
+        id: { type: String, required: true },
+        ingredient: { type: String, required: true },
       },
     ],
   },

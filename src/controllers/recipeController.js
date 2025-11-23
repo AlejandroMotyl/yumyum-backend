@@ -2,6 +2,7 @@ import createHttpError from 'http-errors';
 import { Recipe } from '../models/recipe.js';
 import { User } from '../models/user.js';
 import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { deleteFileFromCloudinary } from '../utils/deleteFileFromCloudinary.js';
 
 export const getAllRecipesPublic = async (req, res) => {
   const {
@@ -175,9 +176,9 @@ export const removeRecipeFromFavorites = async (req, res) => {
 
   user.savedRecipes.splice(index, 1);
   await user.save();
-
   await Recipe.findByIdAndUpdate(recipeId, {
-    $inc: { favoritesCount: recipe.favoritesCount > 0 ? -1 : 0 },
+    $inc: { favoritesCount: -1 },
+    $max: { favoritesCount: 0 },
   });
 
   res.json({ message: 'Recipe removed from favorites' });
@@ -203,9 +204,9 @@ export const getFavoriteRecipes = async (req, res) => {
     throw createHttpError(404, 'User not found');
   }
 
-  const recipesQuery = Recipe.find({ _id: { $in: user.savedRecipes } })
-    .populate('owner', 'username email avatar')
-    .populate('ingredients.id', 'name img desc');
+  const recipesQuery = Recipe.find({
+    _id: { $in: user.savedRecipes },
+  }).populate('owner', 'username email avatar');
 
   if (category) {
     recipesQuery.where({ category });
@@ -254,6 +255,17 @@ export const deleteMyRecipe = async (req, res) => {
 
   if (recipe.owner.toString() !== userId.toString()) {
     throw createHttpError(403, 'You are not the owner of this recipe');
+  }
+
+  if (recipe.thumb) {
+    try {
+      const result = await deleteFileFromCloudinary(recipe.thumb);
+      if (result.result !== 'ok' && result.result !== 'not found') {
+        console.warn('Failed to delete Cloudinary image', recipe.thumb);
+      }
+    } catch (err) {
+      console.warn('Error deleting Cloudinary image', err);
+    }
   }
 
   const usersUpdated = await User.updateMany(
