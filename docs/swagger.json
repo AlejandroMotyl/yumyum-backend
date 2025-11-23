@@ -6,11 +6,11 @@
     "version": "1.0.0"
   },
   "servers": [
-    { "url": "http://localhost:3000", "description": "Local dev" },
     {
       "url": "https://nodejs-hw-zdyd.onrender.com",
       "description": "Render production"
-    }
+    },
+    { "url": "http://localhost:3000", "description": "Local dev" }
   ],
   "tags": [
     { "name": "Auth", "description": "Authentication endpoints" },
