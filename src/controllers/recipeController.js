@@ -176,11 +176,15 @@ export const removeRecipeFromFavorites = async (req, res) => {
 
   user.savedRecipes.splice(index, 1);
   await user.save();
-  await Recipe.findByIdAndUpdate(recipeId, {
-    $inc: { favoritesCount: -1 },
-    $max: { favoritesCount: 0 },
-  });
-
+  await Recipe.findByIdAndUpdate(recipeId, [
+    {
+      $set: {
+        favoritesCount: {
+          $max: [{ $subtract: ['$favoritesCount', 1] }, 0],
+        },
+      },
+    },
+  ]);
   res.json({ message: 'Recipe removed from favorites' });
 };
 
