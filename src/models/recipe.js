@@ -14,7 +14,6 @@ const recipeSchema = new Schema(
     },
     area: {
       type: String,
-      required: false,
       trim: true,
     },
     instructions: {
@@ -25,7 +24,6 @@ const recipeSchema = new Schema(
     description: {
       type: String,
       trim: true,
-      default: '',
       required: true,
     },
     thumb: {
@@ -73,8 +71,7 @@ recipeSchema.index({
   description: 'text',
   instructions: 'text',
 });
-
-recipeSchema.index({ category: 1 });
+recipeSchema.index({ categoryId: 1 });
 
 recipeSchema.index({ owner: 1 });
 
