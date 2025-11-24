@@ -7,7 +7,7 @@ import { deleteFileFromCloudinary } from '../utils/deleteFileFromCloudinary.js';
 export const getAllRecipesPublic = async (req, res) => {
   const {
     page = 1,
-    perPage = 10,
+    perPage = 12,
     search,
     category,
     ingredient,
