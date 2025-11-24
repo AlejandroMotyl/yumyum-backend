@@ -35,19 +35,19 @@ It provides public and authenticated endpoints for browsing recipes, managing fa
 
 ## Endponts Overview
 
-### Auth Routes
+### Auth Endpoints
 
 - POST /api/auth/register
 - POST /api/auth/login
 - POST /api/auth/logout
 - POST /api/auth/refresh
 
-### Categories & Ingredients
+### Categories & Ingredients Endpoints
 
 - GET /api/categories
 - GET /api/ingredients
 
-### Recipes Routes
+### Recipes Endpoints
 
 - GET /api/recipes
 - GET /api/recipes/id/:recipeId
@@ -58,11 +58,24 @@ It provides public and authenticated endpoints for browsing recipes, managing fa
 - GET /api/recipes/favorites
 - DELETE /api/recipes/own/delete/:recipeId
 
-### User Routes
+### User Endpoints
 
 - GET /api/users
 
 ---
+
+## Environment Variables Overview
+
+- PORT={your_preferable_port}
+- NODE_ENV=development
+- MONGO_URL={your_mongo_url}
+
+- JWT_SECRET={your_JWT_secret}
+
+- CLOUDINARY_CLOUD_NAME=dbnixmnsf
+- CLOUDINARY_API_KEY={your_cloudinary_api_key}
+- CLOUDINARY_API_SECRET={your_cloudinary_api_secret}
+- FRONTEND_DOMAIN={you may use localhost or any other}
 
 ## 📦 Key Dependencies
 
@@ -88,4 +101,30 @@ These are the main packages that will be installed via `npm install`:
 
 ---
 
-## 📂 Project Structure
+## 📄 License
+
+This project is licensed under the MIT License.
+You are free to use, modify, and distribute this code for learning or personal projects.
+
+See the `LICENSE` file for details.
+
+## 👥 Contributors [![Contributors](https://img.shields.io/github/contributors/AlejandroMotyl/yumyum-backend.svg)](https://github.com/AlejandroMotyl/yumyum-backend/graphs/contributors)
+
+Thanks to all amazing members of the YumYum team!
+
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/mad-jules"><img src="https://avatars.githubusercontent.com/mad-jules" width="70px;" alt=""/><br /><sub><b>mad-jules</b></sub></a></td>
+    <td align="center"><a href="https://github.com/JustSanya1"><img src="https://avatars.githubusercontent.com/JustSanya1" width="70px;" alt=""/><br /><sub><b>JustSanya1</b></sub></a></td>
+    <td align="center"><a href="https://github.com/Sasha-Velikorod"><img src="https://avatars.githubusercontent.com/Sasha-Velikorod" width="70px;" alt=""/><br /><sub><b>Sasha-Velikorod</b></sub></a></td>
+    <td align="center"><a href="https://github.com/yehor-lytovchenko"><img src="https://avatars.githubusercontent.com/yehor-lytovchenko" width="70px;" alt=""/><br /><sub><b>yehor-lytovchenko</b></sub></a></td>
+    <td align="center"><a href="https://github.com/RocketReact"><img src="https://avatars.githubusercontent.com/RocketReact" width="70px;" alt=""/><br /><sub><b>RocketReact</b></sub></a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/artem-v20"><img src="https://avatars.githubusercontent.com/artem-v20" width="70px;" alt=""/><br /><sub><b>artem-v20</b></sub></a></td>
+    <td align="center"><a href="https://github.com/Djakyz"><img src="https://avatars.githubusercontent.com/Djakyz" width="70px;" alt=""/><br /><sub><b>Djakyz</b></sub></a></td>
+    <td align="center"><a href="https://github.com/usernameRuslant"><img src="https://avatars.githubusercontent.com/usernameRuslant" width="70px;" alt=""/><br /><sub><b>usernameRuslant</b></sub></a></td>
+    <td align="center"><a href="https://github.com/vitalii-cherukha"><img src="https://avatars.githubusercontent.com/vitalii-cherukha" width="70px;" alt=""/><br /><sub><b>vitalii-cherukha</b></sub></a></td>
+    <td align="center"><a href="https://github.com/alex-dmytriev"><img src="https://avatars.githubusercontent.com/alex-dmytriev" width="70px;" alt=""/><br /><sub><b>alex-dmytriev</b></sub></a></td>
+  </tr>
+</table>
