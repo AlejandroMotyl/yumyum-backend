@@ -71,7 +71,7 @@ recipeSchema.index({
   description: 'text',
   instructions: 'text',
 });
-recipeSchema.index({ categoryId: 1 });
+recipeSchema.index({ category: 1 });
 
 recipeSchema.index({ owner: 1 });
 
