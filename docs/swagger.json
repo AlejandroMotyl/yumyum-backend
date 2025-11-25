@@ -45,7 +45,20 @@
             "description": "User registered successfully",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/User" }
+                "schema": { "$ref": "#/components/schemas/User" },
+                "examples": {
+                  "newUser": {
+                    "value": {
+                      "_id": "64f0c2c1f1a4a1e123456789",
+                      "name": "John Doe",
+                      "email": "john@example.com",
+                      "avatar": "https://ac.goit.global/fullstack/react/default-avatar.jpg",
+                      "savedRecipes": [],
+                      "createdAt": "2025-11-24T10:30:00.000Z",
+                      "updatedAt": "2025-11-24T10:30:00.000Z"
+                    }
+                  }
+                }
               }
             }
           },
@@ -361,7 +374,7 @@
                   "type": "object",
                   "properties": {
                     "page": { "type": "integer", "example": 1 },
-                    "perPage": { "type": "integer", "example": 10 },
+                    "perPage": { "type": "integer", "example": 12 },
                     "totalRecipes": { "type": "integer", "example": 100 },
                     "totalPages": { "type": "integer", "example": 10 },
                     "recipes": {
@@ -613,36 +626,7 @@
           "required": true,
           "content": {
             "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "required": ["title", "category", "description", "ingredients"],
-                "properties": {
-                  "title": { "type": "string", "example": "Chocolate Cake" },
-                  "description": {
-                    "type": "string",
-                    "example": "Delicious chocolate cake recipe"
-                  },
-                  "category": { "type": "string", "example": "Dessert" },
-                  "ingredients": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string",
-                          "example": "640c2dd963a319ea671e367e"
-                        },
-                        "measure": { "type": "string", "example": "200g" }
-                      }
-                    }
-                  },
-                  "thumb": {
-                    "type": "string",
-                    "format": "binary",
-                    "description": "Optional image file for the recipe thumbnail"
-                  }
-                }
-              }
+              "schema": { "$ref": "#/components/schemas/CreateRecipeRequest" }
             }
           }
         },
@@ -1004,6 +988,13 @@
     }
   },
   "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
     "schemas": {
       "User": {
         "type": "object",
@@ -1095,7 +1086,7 @@
                 "pattern": "^[0-9a-fA-F]{24}$",
                 "example": "64c8d958249fae54bae90bb9"
               },
-              "username": { "type": "string", "example": "johndoe" },
+              "name": { "type": "string", "example": "johndoe" },
               "email": { "type": "string", "example": "john@example.com" },
               "avatar": {
                 "type": "string",
@@ -1147,6 +1138,69 @@
             "type": "string",
             "format": "date-time",
             "example": "2024-03-03T16:47:51.976Z"
+          }
+        }
+      },
+      "CreateRecipeRequest": {
+        "type": "object",
+        "required": [
+          "title",
+          "category",
+          "description",
+          "instructions",
+          "time",
+          "ingredients"
+        ],
+        "properties": {
+          "title": { "type": "string", "example": "Chocolate Cake" },
+          "category": { "type": "string", "example": "Dessert" },
+          "area": { "type": "string", "example": "British" },
+          "instructions": {
+            "type": "string",
+            "example": "Preheat oven, mix ingredients, bake 30 minutes..."
+          },
+          "description": {
+            "type": "string",
+            "example": "Delicious chocolate cake recipe"
+          },
+          "thumb": {
+            "type": "string",
+            "format": "binary",
+            "description": "Optional image file for the recipe thumbnail"
+          },
+          "time": { "type": "integer", "example": 60 },
+          "cals": { "type": "integer", "example": 1200 },
+          "ingredients": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "measure"],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "640c2dd963a319ea671e367e"
+                },
+                "measure": { "type": "string", "example": "200g" }
+              }
+            }
+          }
+        },
+        "examples": {
+          "recipeExample": {
+            "summary": "Example recipe",
+            "value": {
+              "title": "Chocolate Cake",
+              "description": "Delicious chocolate cake recipe",
+              "category": "Dessert",
+              "ingredients": [
+                { "id": "640c2dd963a319ea671e367e", "measure": "200g" },
+                { "id": "640c2dd963a319ea671e367f", "measure": "100g" }
+              ],
+              "time": 60,
+              "cals": 1200,
+              "area": "British",
+              "instructions": "Preheat oven to 180C, mix ingredients, bake 30 minutes..."
+            }
           }
         }
       },
